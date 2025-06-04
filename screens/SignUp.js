@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   StyledContainer,
   InnerContainer,
-  PageLogo,
   PageTitle,
   SubTitle,
   StyledFormArea,
@@ -20,29 +19,59 @@ import {
   TextLink,
   TextLinkContent,
 } from "../constant/style";
-import { assets } from "../constant/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { View } from "react-native";
+import { TouchableOpacity, View, Platform } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 // Colors
 const { brand, darkLight, primary } = Colors;
 
 const SignUp = () => {
   const [hidePassword, setHidePassword] = useState(true);
+  const [show, setShow] = useState(false);
+  const [date, setDate] = useState(new Date(2000, 0, 1));
+  const [dob, setDob] = useState("");
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    setDob(currentDate.toISOString().split('T')[0]);
+  };
+
+  const showDatepicker = () => {
+    setShow(true);
+  };
+
   const navigation = useNavigation();
   return (
     <StyledContainer>
       <StatusBar style="dark" />
       <InnerContainer>
-        <PageLogo resizeMode="cover" source={assets.chatbot} />
         <PageTitle>EduConnect</PageTitle>
         <SubTitle>Create Account</SubTitle>
+
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode="date"
+            display="default"
+            onChange={onChange}
+            maximumDate={new Date()}
+          />
+        )}
+
         <Formik
-          initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
+          initialValues={{
+            fullName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
           onSubmit={(values) => {
             console.log(values);
           }}
@@ -58,6 +87,7 @@ const SignUp = () => {
                 onBlur={handleBlur("fullName")}
                 value={values.fullName}
               />
+
               <MyTextInput
                 label="Email Address"
                 icon="mail"
@@ -68,6 +98,18 @@ const SignUp = () => {
                 value={values.email}
                 keyboardType="email-address"
               />
+
+              <MyTextInput
+                label="Date of Birth"
+                icon="calendar"
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={darkLight}
+                value={dob}
+                isDate={true}
+                editable={false}
+                showDatepicker={showDatepicker}
+              />
+
               <MyTextInput
                 label="Password"
                 icon="lock"
@@ -76,11 +118,12 @@ const SignUp = () => {
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
                 value={values.password}
-                secureTextEntry={true}
+                secureTextEntry={hidePassword}
                 isPassword={true}
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
               />
+
               <MyTextInput
                 label="Confirm Password"
                 icon="lock"
@@ -89,11 +132,12 @@ const SignUp = () => {
                 onChangeText={handleChange("confirmPassword")}
                 onBlur={handleBlur("confirmPassword")}
                 value={values.confirmPassword}
-                secureTextEntry={true}
+                secureTextEntry={hidePassword}
                 isPassword={true}
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
               />
+
               <MsgBox>...</MsgBox>
               <StyledButton onPress={handleSubmit}>
                 <ButtonText>Sign Up</ButtonText>
@@ -106,7 +150,9 @@ const SignUp = () => {
               <ExtraView>
                 <ExtraText>Already have an account?</ExtraText>
                 <TextLink>
-                  <TextLinkContent onPress={() => navigation.navigate("Login")}>Login</TextLinkContent>
+                  <TextLinkContent onPress={() => navigation.navigate("Login")}>
+                    Login
+                  </TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>
@@ -117,17 +163,35 @@ const SignUp = () => {
   );
 };
 
-const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, ...props }) => {
+const MyTextInput = ({
+  label,
+  icon,
+  isPassword,
+  hidePassword,
+  setHidePassword,
+  isDate,
+  showDatepicker,
+  ...props
+}) => {
   return (
     <View>
       <LeftIcon>
         <Octicons name={icon} size={25} color={brand} />
       </LeftIcon>
       <StyledInputLabel>{label}</StyledInputLabel>
-      <StyledTextInput {...props} />
+      {!isDate && <StyledTextInput {...props} />}
+      {isDate && (
+        <TouchableOpacity onPress={showDatepicker}>
+          <StyledTextInput {...props}/>
+        </TouchableOpacity>
+      )}
       {isPassword && (
         <RightIcon onPress={() => setHidePassword(!hidePassword)}>
-          <Ionicons name={hidePassword ? "eye-off" : "eye"} size={25} color={darkLight} />
+          <Ionicons
+            name={hidePassword ? "eye-off" : "eye"}
+            size={25}
+            color={darkLight}
+          />
         </RightIcon>
       )}
     </View>
