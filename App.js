@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // screens
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
+import FooterMenu from './components/FooterMenu';
 
 const Stack = createStackNavigator();
 
@@ -11,13 +12,14 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName="Login"
+        initialRouteName="FooterMenu"
         screenOptions={{
           headerShown: false
         }}
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="FooterMenu" component={FooterMenu} />
       </Stack.Navigator>
     </NavigationContainer>
   );
