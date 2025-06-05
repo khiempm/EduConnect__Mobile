@@ -23,7 +23,7 @@ import {
 import { assets } from "../constant/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -64,7 +64,7 @@ const Login = () => {
                     onChangeText={handleChange("password")}
                     onBlur={handleBlur("password")}
                     value={values.password}
-                    secureTextEntry={true}
+                    secureTextEntry={hidePassword}
                     isPassword={true}
                     hidePassword={hidePassword}
                     setHidePassword={setHidePassword}
@@ -101,8 +101,10 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, .
     <StyledInputLabel>{label}</StyledInputLabel>
     <StyledTextInput {...props} />
     {isPassword && (
-      <RightIcon onPress={() => setHidePassword(!hidePassword)}>
-        <Ionicons name={hidePassword ? "eye-off" : "eye"} size={25} color={darkLight} />
+      <RightIcon>
+        <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+          <Ionicons name={hidePassword ? "eye-off" : "eye"} size={25} color={darkLight} />
+        </TouchableOpacity>
       </RightIcon>
     )}
   </View>
