@@ -20,7 +20,7 @@ import {
   TextLink,
   TextLinkContent,
 } from "../constant/style";
-import { assets } from "../constant/assets";
+import { assets } from "./../../assets/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import { View, TouchableOpacity } from "react-native";
