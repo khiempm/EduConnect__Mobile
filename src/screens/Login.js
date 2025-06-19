@@ -6,7 +6,6 @@ import {
   PageTitle,
   SubTitle,
   StyledFormArea,
-  Colors,
   StyledButton,
   StyledInputLabel,
   LeftIcon,
@@ -20,12 +19,13 @@ import {
   TextLink,
   TextLinkContent,
 } from "../constant/style";
-import { assets } from "../constant/assets";
+import { assets } from "./../../assets/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import { View, TouchableOpacity } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Colors } from "../constant/color"; 
 
 const {brand, darkLight, primary} = Colors;
 const Login = () => {
@@ -70,7 +70,7 @@ const Login = () => {
                     setHidePassword={setHidePassword}
                 />
                 <MsgBox>...</MsgBox>
-                <StyledButton onPress={handleSubmit}>
+                <StyledButton onPress={() => navigation.navigate("FooterMenu")}>
                   <ButtonText>Login</ButtonText>
                 </StyledButton>
                 <Line />
