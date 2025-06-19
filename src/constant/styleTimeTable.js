@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { View, Text, Image, TextInput } from "react-native";
 import { Colors } from "./color";
 
@@ -15,9 +15,9 @@ export const Header = styled.View`
   flex-direction: column;
   justify-content: center;
   background-color: ${background};
-  gap: 10;
+  gap: 10px;
   align-items: center;
-  padding-bottom: 15;
+  padding-bottom: 15px;
 `;
 
 export const DayBox = styled.TouchableOpacity`
@@ -32,8 +32,8 @@ export const DayBox = styled.TouchableOpacity`
 
 export const DayRow = styled.View`
   flex-direction: row;
-  margin-bottom: 20;
-  gap: 10;
+  margin-bottom: 20px;
+  gap: 10px;
 `;
 
 export const Day = styled.View`
@@ -74,7 +74,7 @@ export const ScheduleList = styled.View`
   background-color: ${primary};
 `;
 
-export const ScheduleBox = styled.View`
+export const ScheduleBox = styled.TouchableOpacity`
   background-color: ${secondary};
   border-radius: 12px;
   padding: 14px;
@@ -86,16 +86,16 @@ export const ScheduleBox = styled.View`
 
 export const ScheduleContainer = styled.View`
   flex-direction: row;
-  margin-bottom: 2;
+  margin-bottom: 2px;
 `;
 
 export const ScheduleTimeContainer = styled.View`
-  flexDirection: column;
-  alignItems: center;
-  marginBottom: 2;
-  gap: 20;
-  borderRightWidth: 1;
-  marginRight: 10;  
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2px;
+  gap: 20px;
+  border-right-width: 1px;
+  margin-right: 10px;  
 `;
 
 export const ScheduleTime = styled.Text`
@@ -106,7 +106,7 @@ export const ScheduleTime = styled.Text`
 
 export const SubjectContainer = styled.View`
   flex-direction: column;
-  gap: 5;
+  gap: 5px ;
   flex: 1;
 `;
 

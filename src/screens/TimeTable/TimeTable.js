@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, TouchableOpacity } from "react-native";
 import { PageTitle } from "../../constant/style";
 import {
   ContainerTimeTable,
@@ -25,16 +25,7 @@ import {
   ScheduleNote,
   SubjectContainer,
 } from "../../constant/styleTimeTable";
-
-const days = [
-  { day: "18", label: "Mon", active: true, badge: 2 },
-  { day: "19", label: "Tue", badge: 1 },
-  { day: "20", label: "Wed", badge: 1 },
-  { day: "21", label: "Thu", badge: 3 },
-  { day: "22", label: "Fri" },
-  { day: "23", label: "Sat" },
-  { day: "24", label: "Sun" },
-];
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const schedules = [
   {
@@ -72,25 +63,27 @@ const schedules = [
   },
 ];
 
-const TimeTable = () => {
+const TimeTable = ({ date, setShow, weekDays, setDate }) => {
+  // formatDate giữ nguyên
+  const formatDate = (dateObj) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return dateObj.toLocaleDateString(undefined, options);
+  };
+
   return (
     <ContainerTimeTable>
       {/* Date */}
       <Header>
-        <PageTitle>October 18th, 2023</PageTitle>
-        {/* Days Row */}
+        <TouchableOpacity onPress={() => setShow(true)}>
+          <PageTitle>{formatDate(date)}</PageTitle>
+        </TouchableOpacity>
         <DayRow>
-          {days.map((d, idx) => (
+          {weekDays.map((d, idx) => (
             <Day key={idx}>
-              <DayBox active={d.active}>
+              <DayBox active={d.active} onPress={() => setDate(d.dateObj)}>
                 <DayText active={d.active}>{d.day}</DayText>
                 <DayLabel active={d.active}>{d.label}</DayLabel>
               </DayBox>
-              {d.badge && (
-                <Badge>
-                  <BadgeText>{d.badge}</BadgeText>
-                </Badge>
-              )}
             </Day>
           ))}
         </DayRow>
@@ -136,5 +129,4 @@ const TimeTable = () => {
     </ContainerTimeTable>
   );
 };
-
 export default TimeTable;

@@ -99,7 +99,7 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, .
       <Octicons name={icon} size={25} color={brand} />
     </LeftIcon>
     <StyledInputLabel>{label}</StyledInputLabel>
-    <StyledTextInput {...props} />``
+    <StyledTextInput {...props} />
     {isPassword && (
       <RightIcon>
         <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>

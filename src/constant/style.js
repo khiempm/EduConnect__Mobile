@@ -1,22 +1,8 @@
 import Constants from "expo-constants";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { View, Text, Image, TextInput } from "react-native";
 import { Colors } from "./color";
 const StatusBarHeight = Constants.statusBarHeight;
-<<<<<<< HEAD:constant/style.js
-
-=======
-// colors
-export const Colors = {
-  primary: "#ffffff",
-  secondary: "#E5E7EB",
-  tertiary: "#1F2937",
-  darkLight: "#9CA3AF",
-  brand: "#96BB7C",
-  green: "#10B981",
-  red: "#EF4444",
-};
->>>>>>> 6e1b9f2d854d6ea58d34a634866ce1ff46204e2c:src/constant/style.js
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 export const StyledContainer = styled.View`
