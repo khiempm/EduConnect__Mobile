@@ -5,7 +5,6 @@ import {
   PageTitle,
   SubTitle,
   StyledFormArea,
-  Colors,
   StyledButton,
   StyledInputLabel,
   LeftIcon,
@@ -25,6 +24,7 @@ import { TouchableOpacity, View, Platform } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Colors } from "../constant/color";
 
 // Colors
 const { brand, darkLight, primary } = Colors;

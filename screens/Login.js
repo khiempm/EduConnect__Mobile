@@ -6,7 +6,6 @@ import {
   PageTitle,
   SubTitle,
   StyledFormArea,
-  Colors,
   StyledButton,
   StyledInputLabel,
   LeftIcon,
@@ -26,6 +25,7 @@ import { Formik } from "formik";
 import { View, TouchableOpacity } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Colors } from "../constant/color"; 
 
 const {brand, darkLight, primary} = Colors;
 const Login = () => {
@@ -70,7 +70,7 @@ const Login = () => {
                     setHidePassword={setHidePassword}
                 />
                 <MsgBox>...</MsgBox>
-                <StyledButton onPress={handleSubmit}>
+                <StyledButton onPress={() => navigation.navigate("FooterMenu")}>
                   <ButtonText>Login</ButtonText>
                 </StyledButton>
                 <Line />
@@ -99,7 +99,7 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, .
       <Octicons name={icon} size={25} color={brand} />
     </LeftIcon>
     <StyledInputLabel>{label}</StyledInputLabel>
-    <StyledTextInput {...props} />
+    <StyledTextInput {...props} />``
     {isPassword && (
       <RightIcon>
         <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>

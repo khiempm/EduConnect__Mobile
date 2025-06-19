@@ -12,7 +12,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName="FooterMenu"
+        initialRouteName="Login"
         screenOptions={{
           headerShown: false
         }}
