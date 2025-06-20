@@ -1,8 +1,8 @@
 import styled from "styled-components/native";
-import { View, Text, Image, TextInput } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Colors } from "./color";
 
-const { background, active, primary, black, darkLight, brand} = Colors;
+const { background, primary, black, darkLight, brand} = Colors;
 
 export const ContainerDashBoard = styled.View`
   flex: 1;
@@ -89,7 +89,7 @@ export const NotificationsList = styled.ScrollView`
     flex: 1;
 `;
 
-export const NotificationCard = styled.View`
+export const NotificationCard = styled.TouchableOpacity`
     background-color: ${primary};
     border-radius: 10px;
     padding: 15px;

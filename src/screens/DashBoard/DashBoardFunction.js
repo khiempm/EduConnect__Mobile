@@ -15,7 +15,12 @@ export const getTodayDate = () => {
 export const handleNotificationPress = (notification) => {
   Alert.alert(
     "Chi tiết thông báo",
-    `Học sinh: ${notification.studentName}\nLớp: ${notification.className}\nMôn học: ${notification.subject}\nThời gian: ${notification.time}\nTrạng thái: ${notification.status}\nLý do: ${notification.reason}`,
+    `Học sinh: ${notification.studentName}\n
+    Lớp: ${notification.className}\n
+    Môn học: ${notification.subject}\n
+    Thời gian: ${notification.time}\n
+    Trạng thái: ${notification.status}\n
+    Lý do: ${notification.reason}`,
     [{ text: "Đóng", style: "default" }]
   );
 };

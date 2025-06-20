@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import DashBoard from "../screens/DashBoard/DashBoard";
-import Class from "../screens/Class";
-import Profile from "../screens/Profile";
+import Profile from "../screens/Profile/Profile";
 import TimeTable from "../screens/TimeTable/TimeTableFunction";
 import { Colors } from "../constant/color";
+import Report from "../screens/Report/Report";
 
 
 const Tab = createBottomTabNavigator();
@@ -47,7 +47,7 @@ export default function FooterMenu() {
 
       <Tab.Screen
         name="Báo Cáo"
-        component={Class}
+        component={Report}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="analytics" size={size} color={color} />

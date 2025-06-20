@@ -1,11 +1,4 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import {
   getTodayDate,
@@ -98,7 +91,7 @@ const Dashboard = () => {
       <SummaryContainer style={{ shadowOffset: { width: 0, height: 2 } }}>
         <SummaryCard>
           <MaterialIcons name="people" size={24} color="#FF6B6B" />
-          <SummaryNumber>4/36</SummaryNumber>
+          <SummaryNumber>34/36</SummaryNumber>
           <SummaryLabel>Học sinh</SummaryLabel>
         </SummaryCard>
         <SummaryCard>
@@ -123,7 +116,7 @@ const Dashboard = () => {
         <NotificationsList>
           {todayClasses.map((notification) => (
             <NotificationCard
-              style = {{shadowOffset: { width: 0, height: 1 }, borderLeftColor: getPriorityColor(notification.priority) }}
+              style = {{shadowOffset: { width: 0, height: 1 }, borderLeftColor: getPriorityColor(notification.priority)}}
               key={notification.id}
               onPress={() => handleNotificationPress(notification)}
             >

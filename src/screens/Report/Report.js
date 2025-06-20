@@ -1,13 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const Class = () => {
+const Report = () => {
     return(
         <View>
             <Text>Class</Text>
         </View>
     )
 };
-export default Class;
-
-const styles = StyleSheet.create({})
+export default Report;
