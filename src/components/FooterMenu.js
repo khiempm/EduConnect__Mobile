@@ -5,10 +5,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import DashBoard from "../screens/Dashboard";
 import Class from "../screens/Class";
 import Profile from "../screens/Profile";
-import TimeTable from "../screens/TimeTable/TimeTable";
+import TimeTable from "../screens/TimeTable/TimeTableFunction";
 import { Colors } from "../constant/color";
 
-import Login from "../screens/Login";
 
 const Tab = createBottomTabNavigator();
 const {brand, darkLight} = Colors;

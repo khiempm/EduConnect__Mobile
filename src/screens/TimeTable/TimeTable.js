@@ -25,7 +25,6 @@ import {
   ScheduleNote,
   SubjectContainer,
 } from "../../constant/styleTimeTable";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 const schedules = [
   {
