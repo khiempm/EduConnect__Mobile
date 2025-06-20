@@ -7,7 +7,7 @@ const getWeekDays = (date) => {
   const monday = new Date(date);
   monday.setDate(date.getDate() - ((dayOfWeek + 6) % 7));
   const week = [];
-  const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const dayLabels = ["Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "CN"];
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);

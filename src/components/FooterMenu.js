@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import DashBoard from "../screens/Dashboard";
+import DashBoard from "../screens/DashBoard/DashBoard";
 import Class from "../screens/Class";
 import Profile from "../screens/Profile";
 import TimeTable from "../screens/TimeTable/TimeTableFunction";
@@ -26,7 +26,7 @@ export default function FooterMenu() {
       }}
     >
       <Tab.Screen
-        name="Dashboard"
+        name="Thông Báo"
         component={DashBoard}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -36,7 +36,7 @@ export default function FooterMenu() {
       />
       
       <Tab.Screen
-        name="TimeTable"
+        name="Lịch"
         component={TimeTable}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -46,17 +46,17 @@ export default function FooterMenu() {
       />
 
       <Tab.Screen
-        name="Class"
+        name="Báo Cáo"
         component={Class}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="school" size={size} color={color} />
+            <MaterialIcons name="analytics" size={size} color={color} />
           ),
         }}
       />
 
       <Tab.Screen
-        name="Profile"
+        name="Cá Nhân"
         component={Profile}
         options={{
           tabBarIcon: ({ color, size }) => (
