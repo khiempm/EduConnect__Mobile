@@ -13,6 +13,9 @@ export const Header = styled.View`
     padding-top: 50px;
     padding-bottom: 20px;
     padding-horizontal: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 `;
 
 export const HeaderTitle = styled.Text`
@@ -31,7 +34,7 @@ export const ProfileHeader = styled.View`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 `;
 
 export const ProfileTitle = styled.Text`
@@ -55,13 +58,6 @@ export const ProfileEdit = styled.Text`
 export const ProfileContent = styled.View`
     flex-direction: column;
     gap: 10px;
-`;
-
-export const SectionTitle = styled.Text`
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: ${black};
 `;
 
 export const Row = styled.View`
