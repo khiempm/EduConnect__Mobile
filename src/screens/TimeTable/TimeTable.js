@@ -25,6 +25,7 @@ import {
   ScheduleNote,
   SubjectContainer,
 } from "../../constant/styleTimeTable";
+import { useNavigation } from "@react-navigation/native";
 
 const schedules = [
   {
@@ -63,6 +64,7 @@ const schedules = [
 ];
 
 const TimeTable = ({ date, setShow, weekDays, setDate }) => {
+  const navigation = useNavigation();
   // formatDate giữ nguyên
   const formatDate = (dateObj) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -92,7 +94,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
       <ScheduleList>
         <ScrollView style={{ width: "100%" }}>
           {schedules.map((item, idx) => (
-            <ScheduleBox key={idx} color={item.color}>
+            <ScheduleBox key={idx} color={item.color} onPress={() => navigation.navigate("Attendance")}>
               <ScheduleContainer>
                 <ScheduleTimeContainer>
                   <ScheduleTime>{item.startTime}</ScheduleTime>
