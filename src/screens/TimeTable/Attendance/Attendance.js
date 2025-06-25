@@ -24,6 +24,7 @@ import {
   StudentName,
 } from "../../../constant/styleAttendanceList";
 import { Colors } from "../../../constant/color";
+import { useNavigation } from "@react-navigation/native";
 // Dữ liệu mẫu
 const lesson = {
   subject: "MGT 101 - Organization Management",
@@ -51,7 +52,7 @@ const students = [
 const {primary, active} = Colors;
 const Attendance = () => {
   const [attendance, setAttendance] = useState({});
-
+  const navigation = useNavigation();
   const toggleAttendance = (id) => {
     setAttendance((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -108,7 +109,7 @@ const Attendance = () => {
               btnProps.present = true;
               icon = 'checkmark-circle';
               text = 'Có mặt';
-              iconColor = '#fff';
+              iconColor = primary;
             } else if (status === 'late') {
               btnProps.late = true;
               icon = 'time';
@@ -120,7 +121,7 @@ const Attendance = () => {
             }
             const nextStatus = status === 'present' ? 'late' : status === 'late' ? 'absent' : 'present';
             return (
-              <StudentCard key={student.id}>
+              <StudentCard key={student.id} onPress={() => navigation.navigate('AttendanceDetail', { student })}>
                 <StudentName>{student.name}</StudentName>
                 <AttendanceButton
                   {...btnProps}
@@ -129,7 +130,7 @@ const Attendance = () => {
                   style={btnStyle}
                 >
                   <Ionicons name={icon} size={20} color={iconColor} />
-                  <AttendanceButtonText {...btnProps} style={status === 'absent' ? { color: '#fff' } : {}}>
+                  <AttendanceButtonText {...btnProps} style={status === 'absent' ? { color: primary } : {}}>
                     {text}
                   </AttendanceButtonText>
                 </AttendanceButton>

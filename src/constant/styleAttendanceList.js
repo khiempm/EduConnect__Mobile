@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Colors } from "./color";
 import { Ionicons } from "@expo/vector-icons";
 
-const { background, primary, black, darkLight, brand, active} = Colors;
+const { background, primary, black, darkLight, brand, active, green} = Colors;
 
 export const ContainerAttendance = styled.View`
   flex: 1;
@@ -67,7 +67,7 @@ export const StudentList = styled.View`
   flex: 1;
   margin: 0 8px;
 `;
-export const StudentCard = styled.View`
+export const StudentCard = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -102,7 +102,7 @@ export const AttendanceButtonText = styled.Text`
 `;
 export const Footer = styled.View`
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   padding: 24px 0 32px 0;
   background-color: #F7F9FB;
 `;
@@ -114,6 +114,8 @@ export const StyledButtonShadow = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  background-color: ${green};
+  margin-horizontal: 8px;
 `;
 export const CancelButton = styled.TouchableOpacity`
   flex: 1;
@@ -127,6 +129,7 @@ export const CancelButton = styled.TouchableOpacity`
   justify-content: center;
   margin-left: 10px;
   elevation: 2;
+  margin-right: 8px;
 `;
 export const CancelButtonText = styled.Text`
   color: #888;
