@@ -64,13 +64,14 @@ const Attendance = () => {
   const handleCancel = () => {
     // Xử lý hủy
     setAttendance({});
+    navigation.goBack();
   };
 
   return (
     <ContainerAttendance>
       <HeaderContainer>
         <HeaderRow>
-          <BackButton>
+          <BackButton onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={28} color={primary} />
           </BackButton>
           <HeaderTitle>Điểm danh</HeaderTitle>
