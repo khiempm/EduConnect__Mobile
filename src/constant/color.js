@@ -10,4 +10,5 @@ export const Colors = {
     background: "#EBEBF5",
     active: "#2563eb",
     black: "#000000",
+    backgroundBrand: "#EAF1FF",
   };
