@@ -6,7 +6,7 @@ import DashBoard from "../screens/DashBoard/DashBoard";
 import Profile from "../screens/Profile/Profile";
 import TimeTable from "../screens/TimeTable/TimeTableFunction";
 import { Colors } from "../constant/color";
-import Report from "../screens/Report/Report";
+import Report from "../screens/Report/CreateReport";
 
 
 const Tab = createBottomTabNavigator();
