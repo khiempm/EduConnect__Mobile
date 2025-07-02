@@ -22,15 +22,17 @@ import {
 import { assets } from "./../../assets/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "../constant/color"; 
+import useLogin from "../auth/useLogin";
 
 const {brand, darkLight, primary} = Colors;
 const Login = () => {
   const navigation = useNavigation();
   const [hidePassword, setHidePassword] = useState(true);
+  const { handleLogin, errorMessage } = useLogin();
   return (
     <StyledContainer>
       <StatusBar style="dark" />
@@ -41,7 +43,7 @@ const Login = () => {
         <Formik
           initialValues={{ email: "", password: "" }}
           onSubmit={(values) => {
-            console.log(values);
+            handleLogin(values.email, values.password);
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -69,8 +71,8 @@ const Login = () => {
                     hidePassword={hidePassword}
                     setHidePassword={setHidePassword}
                 />
-                <MsgBox>...</MsgBox>
-                <StyledButton onPress={() => navigation.navigate("FooterMenu")}>
+                {errorMessage ? <Text style={{color: "red"}}>Username or password is incorrect</Text> : <MsgBox>...</MsgBox>}
+                <StyledButton onPress={handleSubmit}>
                   <ButtonText>Login</ButtonText>
                 </StyledButton>
                 <Line />
