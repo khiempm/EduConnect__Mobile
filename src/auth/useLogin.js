@@ -21,6 +21,7 @@ const useLogin = () => {
       await AsyncStorage.setItem("token", response.token);
       await AsyncStorage.setItem("userId", response.userId);
       await AsyncStorage.setItem("role", response.role);
+      await AsyncStorage.setItem("teacherName", response.fullName);
       
       if (response.role === "Teacher") {
         const response1 = await fetcher(`Teacher/${response.userId}`);

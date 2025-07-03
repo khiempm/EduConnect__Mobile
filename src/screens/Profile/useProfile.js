@@ -6,6 +6,7 @@ import axios from "axios";
 const useProfile = () => {
     const [email, setEmail] = useState();
     const [name, setName] = useState();
+    const [classes, setClasses] = useState([]);
     const getProfile = async () => {
         const userId = await AsyncStorage.getItem("userId");
         try {
@@ -19,10 +20,25 @@ const useProfile = () => {
             console.log(error);
         }
     }
+    const getClasses = async () => {
+        try {
+            const teacherId = await AsyncStorage.getItem("teacherId");
+            const response =   await fetcher(`Classroom/teacher/${teacherId}`);
+            if(response){
+                console.log(response);
+                setClasses(response);
+            }
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return {
         getProfile,
         email,
-        name
+        name,
+        getClasses,
+        classes
     }
 }
 
