@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { postData } from "../api/fetcher";
+import { fetcher, postData, putData } from "../api/fetcher";
 import { useState } from "react";
+// import messaging from '@react-native-firebase/messaging';
+import { Platform } from "react-native";
 // Ví dụ gửi token lên server
 const useLogin = () => {
   const navigation = useNavigation();
@@ -15,11 +17,31 @@ const useLogin = () => {
       if (!response?.token) {
         throw new Error("Failed to login");
       }
-
+      ` `
       await AsyncStorage.setItem("token", response.token);
       await AsyncStorage.setItem("userId", response.userId);
       await AsyncStorage.setItem("role", response.role);
-      if (response.role === "teacher") {
+      
+      if (response.role === "Teacher") {
+        const response1 = await fetcher(`Teacher/${response.userId}`);
+        if(response1){
+          await AsyncStorage.setItem("teacherId", response1.teacherId);
+          console.log(response1.teacherId);
+          //   // LẤY FCM TOKEN VÀ PLATFORM Ở ĐÂY
+          //   const fcmToken = await messaging().getToken();
+          //   const platform = Platform.OS;
+          // try {
+          //   const response2 = await putData(`Auth/Teacher/${response.userId}/fcm`, {
+          //     fcmToken: fcmToken,
+          //     platform: platform,
+          //   });
+          //   if(response2){
+          //     console.log(response2);
+          //   }
+          // } catch (error) {
+          //   console.log(error);
+          // }
+        }
         navigation.navigate("FooterMenu");
       }
     } catch (error) {

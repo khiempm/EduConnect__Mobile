@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -19,10 +19,14 @@ import {
   ClassTerm,
 } from "../../constant/styleProfile";
 import { Colors } from "../../constant/color";
-
+import useProfile from "./useProfile";
 const { darkLight, black, primary } = Colors;
 
 const Profile = () => {
+  const { getProfile, email, name } = useProfile();
+  useEffect(() => {
+    getProfile();
+  }, []);
   return (
     <ContainerProfile>
       <Header>
@@ -47,14 +51,14 @@ const Profile = () => {
             <IconContainer>
               <MaterialIcons name="person" size={24} color={darkLight} />
             </IconContainer>
-            <Text>Florencia Yannuzzi</Text>
+            <Text>{name}</Text>
           </Row>
           <Separator />
           <Row>
             <IconContainer>
               <MaterialIcons name="email" size={24} color={darkLight} />
             </IconContainer>
-            <Text>florenciayannuzzi@gmail.com</Text>
+            <Text>{email}</Text>
           </Row>
 
           {/* Classes settings */}

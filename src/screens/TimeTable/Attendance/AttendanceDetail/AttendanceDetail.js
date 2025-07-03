@@ -36,13 +36,12 @@ const likeTags = [
   "Chưa chuẩn bị bài",
 ];
 
-const students = { id: 1, name: "Nguyen Van A" };
-
-const AttendanceDetail = () => {
+const AttendanceDetail = ({route}) => {
+  const {studentId, studentName} = route.params;
   const navigation = useNavigation();
-  const [rating, setRating] = useState(4);
-  const [selectedLikes, setSelectedLikes] = useState("Có chuẩn bị bài");
-  const [feedback, setFeedback] = useState("");
+  const [focus, setFocus] = useState(0 );
+  const [selectedHomework, setSelectedHomework] = useState("Có chuẩn bị bài");
+  const [note, setNote] = useState("");
 
   const toggleTag = (tag, selected, setSelected) => {
     if (selected.includes(tag)) {
@@ -63,15 +62,15 @@ const AttendanceDetail = () => {
       </Header>
 
       {/* Title */}
-      <Title>{students.name}</Title>
+      <Title>{studentName}</Title>
       <Subtitle>Thái độ học tập của học sinh</Subtitle>
 
       {/* Rating */}
       <Star style={styles.stars}>
         {[1, 2, 3, 4, 5].map((i) => (
-          <TouchableOpacity key={i} onPress={() => setRating(i)}>
+          <TouchableOpacity key={i} onPress={() => setFocus(i)}>
             <Ionicons
-              name={i <= rating ? "star" : "star-outline"}
+              name={i <= focus ? "star" : "star-outline"}
               size={36}
               color={brand}
               style={{ marginHorizontal: 2 }}
@@ -86,11 +85,11 @@ const AttendanceDetail = () => {
         {likeTags.map((tag) => (
           <Tag
             key={tag}
-            style={selectedLikes.includes(tag) && styles.tagSelected}
-            onPress={() => toggleTag(tag, selectedLikes, setSelectedLikes)}
+            style={selectedHomework.includes(tag) && styles.tagSelected}
+            onPress={() => toggleTag(tag, selectedHomework, setSelectedHomework)}
           >
             <TagText
-              style={selectedLikes.includes(tag) && styles.tagTextSelected}
+              style={selectedHomework.includes(tag) && styles.tagTextSelected}
             >
               {tag}
             </TagText>
@@ -103,13 +102,21 @@ const AttendanceDetail = () => {
       <Textarea
         placeholderTextColor={black}
         placeholder="Nhận xét việc học trên lớp của học sinh."
-        value={feedback}
-        onChangeText={setFeedback}
+        value={note}
+        onChangeText={setNote}
         multiline
       />
 
       {/* Submit button */}
-      <SubmitButton style={styles.submitButton}>
+      <SubmitButton style={styles.submitButton} onPress={() => {
+        navigation.navigate('Attendance', {
+          detailStudentId: studentId,
+          detailFocus: focus,
+          detailNote: note,
+          detailHomework: focus.toString(),
+          studentName: studentName,
+        });
+      }}>
         <SubmitButtonText>Lưu</SubmitButtonText>
       </SubmitButton>
     </ContainerNote>

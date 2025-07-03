@@ -22,17 +22,19 @@ import {
 import { assets } from "./../../assets/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "../constant/color"; 
 import useLogin from "../auth/useLogin";
+import Loading from "../components/Loading";
 
 const {brand, darkLight, primary} = Colors;
 const Login = () => {
   const navigation = useNavigation();
   const [hidePassword, setHidePassword] = useState(true);
   const { handleLogin, errorMessage } = useLogin();
+  const [loading, setLoading] = useState(false);
   return (
     <StyledContainer>
       <StatusBar style="dark" />
@@ -40,10 +42,16 @@ const Login = () => {
         <PageLogo resizeMode="cover" source={assets.chatbot} />
         <PageTitle>EduConnect</PageTitle>
         <SubTitle>Hello Teacher!</SubTitle>
+        {loading && <Loading visible={loading} />}
         <Formik
           initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => {
-            handleLogin(values.email, values.password);
+          onSubmit={async (values) => {
+            setLoading(true);
+            try {
+              await handleLogin(values.email, values.password);
+            } finally {
+              setLoading(false);
+            }
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values }) => (
