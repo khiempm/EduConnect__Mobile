@@ -10,6 +10,8 @@ import SignUp from './src/screens/SignUp';
 import FooterMenu from './src/components/FooterMenu';
 import Attendance from './src/screens/TimeTable/Attendance/Attendance';
 import AttendanceDetail from './src/screens/TimeTable/Attendance/AttendanceDetail/AttendanceDetail';
+import ReportHistory from './src/screens/Report/History/ReportHistory';
+import ReportDetail from './src/screens/Report/History/ReportDetail/ReportDetail';
 
 
 const Stack = createStackNavigator();
@@ -65,6 +67,8 @@ export default function App() {
         <Stack.Screen name="FooterMenu" component={FooterMenu} />
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="AttendanceDetail" component={AttendanceDetail} />
+        <Stack.Screen name="ReportHistory" component={ReportHistory} />
+        <Stack.Screen name="ReportDetail" component={ReportDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
