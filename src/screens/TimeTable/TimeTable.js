@@ -29,42 +29,6 @@ import { useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// const schedules = [
-//   {
-//     startTime: "09:10 AM",
-//     endTime: "10:00 AM",
-//     subject: "MGT 101 - Organization Management",
-//     room: "Room 101",
-//     note: "Missing assignment",
-//     status: "now",
-//   },
-//   {
-//     startTime: "10:00 AM",
-//     endTime: "10:50 AM",
-//     subject: "EC 203 - Principles Macroeconomics",
-//     room: "Room 213",
-//     note: "Missing assignment",
-//     color: "#27AE60",
-//     status: "notYet",
-//   },
-//   {
-//     startTime: "10:10 AM",
-//     endTime: "11:00 AM",
-//     subject: "EC 202 - Principles Microeconomics",
-//     room: "Room 302",
-//     color: "#BB6BD9",
-//     status: "done",
-//   },
-//   {
-//     startTime: "11:10 AM",
-//     endTime: "12:00 PM",
-//     subject: "FN 215 - Financial Management",
-//     room: "Room 111",
-//     color: "#2D9CDB",
-//     status: "done",
-//   },
-// ];
-
 // Hàm chuyển đổi dữ liệu API sang định dạng UI
 function mapCourseToSchedule(course) {
   // Format giờ phút từ ISO string
@@ -94,7 +58,6 @@ function mapCourseToSchedule(course) {
 const TimeTable = ({ date, setShow, weekDays, setDate }) => {
   const [schedules, setSchedules] = useState([]);
   const navigation = useNavigation();
-  
   const getCourse = async () => {
     try {
       const teacherId = await AsyncStorage.getItem("teacherId");
@@ -179,7 +142,6 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
               );
             })
             .map((item, idx) => (
-              console.log(item),
               <ScheduleBox key={idx} color={item.color} onPress={() => navigation.navigate("Attendance",{
                 courseId: item.courseId,
                 courseName: item.subject,
@@ -205,16 +167,46 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
                           style={{ flexDirection: "row", alignItems: "center" }}
                         >
                           <ScheduleBadge />
-                          <ScheduleNote>{item.status === "unpresent" ? "Chưa điểm danh" : "đã điểm danh"}</ScheduleNote>
+                          {item.status === "unpresent" ? <ScheduleNote style={{color: "red"}}>Chưa điểm danh</ScheduleNote> : <ScheduleNote style={{color: "green"}}>đã điểm danh</ScheduleNote>}
                         </View>
                       )}
                     </View>
                   </SubjectContainer>
-                  {item.note === "now" && <Now>Đang diễn ra</Now>}
-                  {item.note === "notYet" && (
-                    <NotYet>in {item.inMinutes}Phút</NotYet>
-                  )}
-                  {item.note === "done" && <Done>Đã kết thúc</Done>}
+                  {(() => {
+                        const now = new Date();
+                        const start = new Date(item.rawStartTime);
+                        const end = new Date(item.rawStartTime);
+                        // Giả sử tiết học kéo dài 1 tiếng, hoặc nếu có endTime thì dùng item.rawEndTime
+                        if (item.endTime && item.rawEndTime) {
+                          end.setHours(new Date(item.rawEndTime).getHours());
+                          end.setMinutes(new Date(item.rawEndTime).getMinutes());
+                        } else {
+                          end.setHours(start.getHours() + 1);
+                        }
+                        if (now < start) {
+                          const diffMs = start - now;
+                          const diffMin = Math.ceil(diffMs / 60000);
+                          if (diffMin > 60) {
+                            return (
+                              <NotYet>Sắp diễn ra</NotYet>
+                            );
+                          } else {
+                            return (
+                              <NotYet>Còn {diffMin} phút</NotYet>
+                            );
+                          }
+                        } else if (now >= start && now <= end) {
+                          return (
+                            <Now>Đang diễn ra</Now>
+                          );
+                        } else if (now > end) {
+                          return (
+                            <Done>Đã kết thúc</Done>
+                          );
+                        } else {
+                          return null;
+                        }
+                      })()}
                 </ScheduleContainer>
               </ScheduleBox>
             ))}

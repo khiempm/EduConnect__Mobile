@@ -36,9 +36,8 @@ const likeTags = [
   "Chưa chuẩn bị bài",
 ];
 
-const AttendanceDetail = ({route}) => {
-  const {studentId, studentName} = route.params;
-  const navigation = useNavigation();
+const AttendanceDetail = ({route, navigation}) => {
+  const {studentId, studentName, onSave} = route.params;
   const [focus, setFocus] = useState(0 );
   const [selectedHomework, setSelectedHomework] = useState("Có chuẩn bị bài");
   const [note, setNote] = useState("");
@@ -109,13 +108,15 @@ const AttendanceDetail = ({route}) => {
 
       {/* Submit button */}
       <SubmitButton style={styles.submitButton} onPress={() => {
-        navigation.navigate('Attendance', {
-          detailStudentId: studentId,
-          detailFocus: focus,
-          detailNote: note,
-          detailHomework: focus.toString(),
-          studentName: studentName,
-        });
+        if (onSave) {
+          onSave({
+            studentId,
+            note,
+            homework: selectedHomework,
+            focus
+          });
+        }
+        navigation.goBack();
       }}>
         <SubmitButtonText>Lưu</SubmitButtonText>
       </SubmitButton>

@@ -94,13 +94,13 @@ const Attendance = ({route, navigation}) => {
     const attendanceData = students.map(student => {
       const details = studentDetails[student.studentId || student.id] || {};
       return {
-        atID: "", // để rỗng nếu là tạo mới
+        atID: "",
         studentId: student.studentId || student.id,
         courseId: courseId,
         participation: attendance[student.studentId || student.id] || "absent",
         note: details.note || "",
-        homework: details.homework || "",
-        focus: details.focus || "",
+        homework: (details.homework || "").toString(),
+        focus: (details.focus || "").toString(),
       };
     });
     try {
@@ -111,6 +111,7 @@ const Attendance = ({route, navigation}) => {
         console.log(response);
       }
       alert("Đã lưu điểm danh!");
+      navigation.goBack();
     } catch (error) {
       console.log(error);
       alert("Lưu điểm danh thất bại!");
@@ -182,6 +183,16 @@ const Attendance = ({route, navigation}) => {
               <StudentCard key={uniqueId} onPress={() => navigation.navigate('AttendanceDetail', {
                 studentId: uniqueId,
                 studentName: student.fullName,
+                onSave: (data) => {
+                  setStudentDetails(prev => ({
+                    ...prev,
+                    [data.studentId]: {
+                      note: data.note,
+                      homework: data.homework,
+                      focus: data.focus
+                    }
+                  }));
+                }
               })}>
                 <StudentName>{student.fullName}</StudentName>
                 <AttendanceButton
