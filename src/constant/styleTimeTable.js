@@ -118,7 +118,7 @@ export const ScheduleSubject = styled.Text`
 `;
 
 export const ScheduleRoom = styled.Text`
-  color: ${darkLight};
+  color: ${brand};
   font-size: 13px;
   margin-right: 10px;
 `;

@@ -255,6 +255,12 @@ const CreateReport = ({ navigation }) => {
   return (
     <ReportContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          style={{ alignSelf: 'flex-end', marginBottom: 12, marginTop: 8, padding: 8, backgroundColor: '#2D9CDB', borderRadius: 6 }}
+          onPress={() => navigation.navigate('ReportHistory')}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Lịch sử báo cáo</Text>
+        </TouchableOpacity>
         <ReportHeader>
           <ReportTitle>Tạo Báo Cáo Tự Động</ReportTitle>
           <ReportSubtitle>

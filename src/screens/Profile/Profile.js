@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -19,10 +19,32 @@ import {
   ClassTerm,
 } from "../../constant/styleProfile";
 import { Colors } from "../../constant/color";
-
+import useProfile from "./useProfile";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { darkLight, black, primary } = Colors;
 
 const Profile = () => {
+  const { getProfile, email, name, getClasses, classes } = useProfile();
+  const navigation = useNavigation();
+  useEffect(() => {
+    getProfile();
+    getClasses();
+  }, []);
+
+  // Hàm logout
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.log('Logout error:', error);
+    }
+  };
+
   return (
     <ContainerProfile>
       <Header>
@@ -32,6 +54,7 @@ const Profile = () => {
             alignItems: "center",
             justifyContent: "center",
           }}
+          onPress={handleLogout}
         >
           <MaterialIcons name="logout" size={40} color={primary} />
         </TouchableOpacity>
@@ -47,14 +70,14 @@ const Profile = () => {
             <IconContainer>
               <MaterialIcons name="person" size={24} color={darkLight} />
             </IconContainer>
-            <Text>Florencia Yannuzzi</Text>
+            <Text>{name}</Text>
           </Row>
           <Separator />
           <Row>
             <IconContainer>
               <MaterialIcons name="email" size={24} color={darkLight} />
             </IconContainer>
-            <Text>florenciayannuzzi@gmail.com</Text>
+            <Text>{email}</Text>
           </Row>
 
           {/* Classes settings */}
@@ -62,37 +85,20 @@ const Profile = () => {
           <Row style={{ justifyContent: "space-between" }}>
             <ProfileTitle>Danh sách lớp</ProfileTitle>
           </Row>
-          <ClassItem>
-            <ClassColorBar color="#A259D9" />
-            <ClassItemContainer>
-              <ClassName>10A1 - Lớp 10A1</ClassName>
-              <ClassTerm>Học kỳ: 1 Năm học: 2024-2025</ClassTerm>
-            </ClassItemContainer>
-          </ClassItem>
-          <ClassItem>
-            <ClassColorBar color="#2EC4B6" />
-            <ClassItemContainer>
-              <ClassName>10A2 - Lớp 10A2</ClassName>
-              <ClassTerm>Học kỳ: 2 Năm học: 2024-2025</ClassTerm>
-            </ClassItemContainer>
-          </ClassItem>
-          <ClassItem>
-            <ClassColorBar color="#3A86FF" />
-            <ClassItemContainer>
-              <ClassName>10A3 - Lớp 10A3</ClassName>
-              <ClassTerm>Học kỳ: 1 Năm học: 2025-2026</ClassTerm>
-            </ClassItemContainer>
-          </ClassItem>
-          <ClassItem>
-            <ClassColorBar color="#FFBE0B" />
-            <ClassItemContainer>
-              <ClassName>10A4 - Lớp 10A4</ClassName>
-              <ClassTerm>Học kỳ: 2 Năm học: 2022-2023</ClassTerm>
-            </ClassItemContainer>
-          </ClassItem>
+          {classes.map((item, index) => (
+            <ClassItem key={index} onPress={() => navigation.navigate("ClassDetail", { classId: item.classId, className: item.className })}>
+              <ClassColorBar color="#A259D9" />
+              <ClassItemContainer>
+                <ClassName>{item.className} - Lớp {item.className}</ClassName>
+                {/* <ClassTerm>Học kỳ: {item.semester} Năm học: {item.academicYear}</ClassTerm> */}
+              </ClassItemContainer>
+            </ClassItem>
+          ))}
         </ProfileContent>
       </ProfileContainer>
     </ContainerProfile>
   );
 };
+
+
 export default Profile;
