@@ -5,7 +5,7 @@ import {
   handleNotificationPress,
   getPriorityColor,
   getStatusIcon,
-  getCouses,
+  getCourses,
 } from "./DashBoardFunction";
 import {
   ContainerDashBoard,
@@ -34,56 +34,59 @@ import {
 } from "../../constant/styleDashBoard";
 const Dashboard = () => {
   // Dữ liệu mẫu về tiết học của học sinh trong ngày
-  const [courses, setCourses] = useState([]);
-
+  const [course, setCourse] = useState({});
+  const [numberOfTodayCourse, setNumberOfTodayCourse] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
-      const courses = await getCouses();
-      console.log(courses);
+      const courses = await getCourses();
+      const {course, numberOfCourse} = courses;
+      setCourse(course);
+      setNumberOfTodayCourse(numberOfCourse);
     };
     fetchData();
   }, []);
+
   const todayClasses = [
-    {
-      id: 1,
-      studentName: "Nguyễn Văn A",
-      className: "10A1",
-      subject: "Toán học",
-      time: "08:00 - 09:00",
-      status: "Vắng mặt",
-      reason: "Bị ốm",
-      priority: "high",
-    },
-    {
-      id: 2,
-      studentName: "Trần Thị B",
-      className: "10A1",
-      subject: "Văn học",
-      time: "09:00 - 10:00",
-      status: "Đi muộn",
-      reason: "Tắc đường",
-      priority: "medium",
-    },
-    {
-      id: 3,
-      studentName: "Lê Văn C",
-      className: "10A2",
-      subject: "Tiếng Anh",
-      time: "10:00 - 11:00",
-      status: "Nghỉ học",
-      reason: "Có việc gia đình",
-      priority: "low",
-    },
-    {
-      id: 4,
-      studentName: "Phạm Thị D",
-      className: "10A1",
-      subject: "Lịch sử",
-      time: "14:00 - 15:00",
-      status: "Vắng mặt",
-      reason: "Chưa rõ lý do",
-      priority: "high",
-    },
+    // {
+    //   id: 1,
+    //   studentName: "Nguyễn Văn A",
+    //   className: "10A1",
+    //   subject: "Toán học",
+    //   time: "08:00 - 09:00",
+    //   status: "Vắng mặt",
+    //   reason: "Bị ốm",
+    //   priority: "high",
+    // },
+    // {
+    //   id: 2,
+    //   studentName: "Trần Thị B",
+    //   className: "10A1",
+    //   subject: "Văn học",
+    //   time: "09:00 - 10:00",
+    //   status: "Đi muộn",
+    //   reason: "Tắc đường",
+    //   priority: "medium",
+    // },
+    // {
+    //   id: 3,
+    //   studentName: "Lê Văn C",
+    //   className: "10A2",
+    //   subject: "Tiếng Anh",
+    //   time: "10:00 - 11:00",
+    //   status: "Nghỉ học",
+    //   reason: "Có việc gia đình",
+    //   priority: "low",
+    // },
+    // {
+    //   id: 4,
+    //   studentName: "Phạm Thị D",
+    //   className: "10A1",
+    //   subject: "Lịch sử",
+    //   time: "14:00 - 15:00",
+    //   status: "Vắng mặt",
+    //   reason: "Chưa rõ lý do",
+    //   priority: "high",
+    // },
   ];
 
   return (
@@ -106,7 +109,7 @@ const Dashboard = () => {
         </SummaryCard>
         <SummaryCard>
           <MaterialIcons name="class" size={24} color="#FFA726" />
-          <SummaryNumber>2</SummaryNumber>
+          <SummaryNumber>{numberOfTodayCourse}</SummaryNumber>
           <SummaryLabel>Tiết học hôm nay</SummaryLabel>
         </SummaryCard>
         <SummaryCard>

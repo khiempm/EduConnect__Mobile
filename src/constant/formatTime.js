@@ -22,6 +22,29 @@ export const formatTime = (isoString) => {
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const time = hours >= 12 ? "CH" : "SA";
-    hours = hours % 12 || 12;
+    hours = hours % 12;
+    if(hours === 0 && time === "CH"){
+        hours = 12;
+    }
     return `${hours}:${minutes} ${time}`;
   };
+
+export const getPresentCourse = (schedule) => {
+    return schedule.filter(item => item.status === "present");
+}
+
+export const sortByStartTimeDesc = (schedule) => {
+    return schedule.sort((a, b) => {
+        const dateA = new Date(a.rawStartTime);
+        const dateB = new Date(b.rawStartTime);
+        return dateB - dateA; 
+    });
+};
+
+export const sortByStartTimeAsc = (schedule) => {
+    return schedule.sort((a, b) => {
+        const dateA = new Date(a.rawStartTime);
+        const dateB = new Date(b.rawStartTime);
+        return dateA - dateB; 
+    });
+};

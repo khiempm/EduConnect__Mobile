@@ -2,6 +2,19 @@ import React from "react";
 import { Alert } from "react-native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { compareDate, formatDate, formatTime, getPresentCourse, sortByStartTimeDesc } from "../../constant/formatTime";
+
+function mapCourseToSchedule(course) {
+  return {
+    startTime:course.startTime,
+    endTime: course.endTime,
+    subject: course.subjectName || "Chưa có tên môn học",
+    classId: course.classId || "",
+    status: course.status,
+    rawStartTime: course.startTime,
+    courseId: course.courseId,
+  };
+}
 
 export const getTodayDate = () => {
   const today = new Date();
@@ -45,14 +58,21 @@ export const getStatusIcon = (status) => {
     }
 };
 
-export const getCouses = async () => {
+export const getCourses = async () => {
   try{
-    const teacherId = await AsyncStorage.getItem('teacherId');
-    const response = await fetcher(`Course/teacher/${teacherId}`);
+    const classId = await AsyncStorage.getItem('classInfo');
+    const response = await fetcher(`Course/class/${classId}`);
     if(response){
-      console.log(response);
+      const mapped = response.map(mapCourseToSchedule);
+      const today = new Date();
+      const presentCourses = getPresentCourse(mapped);
+      const todayCourses = compareDate(presentCourses, today);
+      const sortedCourses = sortByStartTimeDesc(todayCourses);
+      return {
+        course: sortedCourses[0],
+        numberOfCourse: compareDate(mapped, today).length
+      }; 
     }
-    return response;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách môn học:', error);
   }

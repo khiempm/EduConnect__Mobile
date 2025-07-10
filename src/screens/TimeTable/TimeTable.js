@@ -28,7 +28,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { compareDate, formatDate, formatTime } from "../../constant/formatTime";
+import { compareDate, formatDate, formatTime, sortByStartTimeAsc } from "../../constant/formatTime";
 
 //chuyển đổi định dạng
 function mapCourseToSchedule(course) {
@@ -47,7 +47,7 @@ function mapCourseToSchedule(course) {
 const TimeTable = ({ date, setShow, weekDays, setDate }) => {
   const [schedules, setSchedules] = useState([]);
   const navigation = useNavigation();
-  const filteredSchedules = compareDate(schedules, date);
+  const filteredSchedules = sortByStartTimeAsc(compareDate(schedules, date));
   const countPresent = (startTime, endTime)=>{
     const now = new Date();
     const start = new Date(startTime);
@@ -90,13 +90,11 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
             }
           })
         );
-
         // Tạo map classId sang className
         const classIdToName = {};
         classInfoList.forEach(({ classId, className }) => {
           classIdToName[classId] = className;
         });
-
         // Gán className vào từng schedule
         const mappedWithClassName = mapped.map(item => ({
           ...item,
