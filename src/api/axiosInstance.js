@@ -2,7 +2,7 @@ import axios from "axios";
 import { handleApiError } from "./errorHandler.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const axiosInstance = axios.create({
-  baseURL: "http://192.168.1.11:5261/api/",
+  baseURL: "http://192.168.1.11:5261/api/",//192.168.176.3
   withCredentials: true,
   timeout: 60000,
   headers: {
