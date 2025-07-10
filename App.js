@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import messaging from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
+import { Alert, LogBox } from 'react-native';
+
+// Suppress Firebase deprecation warnings
+LogBox.ignoreLogs(['This method is deprecated']);
 
 // screens
 import Login from './src/screens/Login';
@@ -26,7 +29,8 @@ export default function App() {
       console.log('Authorization status:', authStatus);
     }
   };
-  useEffect(() => {   
+    useEffect(() => {
+    requestUserPermission();
     messaging().getInitialNotification().then(async remoteMessage => {
       if (remoteMessage) {
         console.log("notification caused app to open from quit state", remoteMessage.notification);

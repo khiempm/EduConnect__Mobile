@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import {
   getTodayDate,
   handleNotificationPress,
   getPriorityColor,
   getStatusIcon,
+  getCouses,
 } from "./DashBoardFunction";
 import {
   ContainerDashBoard,
@@ -33,6 +34,15 @@ import {
 } from "../../constant/styleDashBoard";
 const Dashboard = () => {
   // Dữ liệu mẫu về tiết học của học sinh trong ngày
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const courses = await getCouses();
+      console.log(courses);
+    };
+    fetchData();
+  }, []);
   const todayClasses = [
     {
       id: 1,

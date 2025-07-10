@@ -28,29 +28,18 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { compareDate, formatDate, formatTime } from "../../constant/formatTime";
 
-// Hàm chuyển đổi dữ liệu API sang định dạng UI
+//chuyển đổi định dạng
 function mapCourseToSchedule(course) {
-  // Format giờ phút từ ISO string
-  const formatTime = (isoString) => {
-    if (!isoString) return "";
-    const date = new Date(isoString);
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const time = hours >= 12 ? "CH" : "SA";
-    hours = hours % 12 || 12;
-    return `${hours}:${minutes} ${time}`;
-  };
-
   return {
     startTime: formatTime(course.startTime),
     endTime: formatTime(course.endTime),
+    rawStartTime: course.startTime,
     subject: course.subjectName || "No subject",
-    room: course.classId || "",
-    note: "now",
+    classId: course.classId || "",
     color: "#2D9CDB",
     status: course.status,
-    rawStartTime: course.startTime,
     courseId: course.courseId,
   };
 }
@@ -58,18 +47,38 @@ function mapCourseToSchedule(course) {
 const TimeTable = ({ date, setShow, weekDays, setDate }) => {
   const [schedules, setSchedules] = useState([]);
   const navigation = useNavigation();
+  const filteredSchedules = compareDate(schedules, date);
+  const countPresent = (startTime, endTime)=>{
+    const now = new Date();
+    const start = new Date(startTime);
+    const end = new Date(endTime || startTime);
+    if (endTime && item.rawEndTime) {
+      end.setHours(new Date(endTime).getHours());
+      end.setMinutes(new Date(endTime).getMinutes());
+    } else {
+      end.setHours(start.getHours() + 1);
+    }
+    if(now < start){
+      const diffMs = start - now;
+      const diffMin = Math.ceil(diffMs / 60000);
+      if(diffMin > 60){
+        return `early`;
+      }
+      return diffMin;
+    }
+    if(now >= start && now <= end){
+      return "now";
+    }
+    return "end";
+  }
+
   const getCourse = async () => {
     try {
       const teacherId = await AsyncStorage.getItem("teacherId");
       const response = await fetcher(`Course/teacher/${teacherId}`);
       if (response) {
-        // Chuyển đổi dữ liệu trước khi setSchedules
         const mapped = response.map(mapCourseToSchedule);
-
-        // Lấy danh sách classId duy nhất
-        const classIds = [...new Set(mapped.map(item => item.room))];
-
-        // Gọi API lấy className cho từng classId
+        const classIds = [...new Set(mapped.map(item => item.classId))];
         const classInfoList = await Promise.all(
           classIds.map(async classId => {
             if (!classId) return { classId, className: "" };
@@ -82,7 +91,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
           })
         );
 
-        // Tạo map classId -> className
+        // Tạo map classId sang className
         const classIdToName = {};
         classInfoList.forEach(({ classId, className }) => {
           classIdToName[classId] = className;
@@ -91,7 +100,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
         // Gán className vào từng schedule
         const mappedWithClassName = mapped.map(item => ({
           ...item,
-          className: classIdToName[item.room] || "",
+          className: classIdToName[item.classId] || "",
         }));
 
         setSchedules(mappedWithClassName);
@@ -100,14 +109,10 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
       console.log(error);
     }
   };
-  // formatDate giữ nguyên
+  
   useEffect(() => {
     getCourse();
   }, []);
-  const formatDate = (dateObj) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return dateObj.toLocaleDateString(undefined, options);
-  };
 
   return (
     <ContainerTimeTable>
@@ -131,24 +136,14 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
       {/* Schedule List */}
       <ScheduleList>
         <ScrollView style={{ width: "100%" }}>
-          {schedules
-            .filter(item => {
-              const scheduleDate = new Date(item.rawStartTime);
-              const selectedDate = new Date(date);
-              return (
-                scheduleDate.getFullYear() === selectedDate.getFullYear() &&
-                scheduleDate.getMonth() === selectedDate.getMonth() &&
-                scheduleDate.getDate() === selectedDate.getDate()
-              );
-            })
-            .map((item, idx) => (
+          { filteredSchedules.map((item, idx) => (
               <ScheduleBox key={idx} color={item.color} onPress={() => navigation.navigate("Attendance",{
                 courseId: item.courseId,
                 courseName: item.subject,
                 courseTime: item.startTime,
                 courseEndTime: item.endTime,
                 courseRoom: item.className,
-                classId: item.room,
+                classId: item.classId,
               })}>
                 <ScheduleContainer>
                   <ScheduleTimeContainer>
@@ -162,51 +157,26 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
 
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                       <ScheduleRoom>Lớp: {item.className}</ScheduleRoom>
-                      {item.note && (
                         <View
                           style={{ flexDirection: "row", alignItems: "center" }}
                         >
                           <ScheduleBadge />
-                          {item.status === "unpresent" ? <ScheduleNote style={{color: "red"}}>Chưa điểm danh</ScheduleNote> : <ScheduleNote style={{color: "green"}}>đã điểm danh</ScheduleNote>}
+                          {item.status === "present" ?<ScheduleNote style={{color: "green"}}>đã điểm danh</ScheduleNote> : <ScheduleNote style={{color: "red"}}>Chưa điểm danh</ScheduleNote>}
                         </View>
-                      )}
                     </View>
                   </SubjectContainer>
                   {(() => {
-                        const now = new Date();
-                        const start = new Date(item.rawStartTime);
-                        const end = new Date(item.rawStartTime);
-                        // Giả sử tiết học kéo dài 1 tiếng, hoặc nếu có endTime thì dùng item.rawEndTime
-                        if (item.endTime && item.rawEndTime) {
-                          end.setHours(new Date(item.rawEndTime).getHours());
-                          end.setMinutes(new Date(item.rawEndTime).getMinutes());
-                        } else {
-                          end.setHours(start.getHours() + 1);
-                        }
-                        if (now < start) {
-                          const diffMs = start - now;
-                          const diffMin = Math.ceil(diffMs / 60000);
-                          if (diffMin > 60) {
-                            return (
-                              <NotYet>Sắp diễn ra</NotYet>
-                            );
-                          } else {
-                            return (
-                              <NotYet>Còn {diffMin} phút</NotYet>
-                            );
-                          }
-                        } else if (now >= start && now <= end) {
-                          return (
-                            <Now>Đang diễn ra</Now>
-                          );
-                        } else if (now > end) {
-                          return (
-                            <Done>Đã kết thúc</Done>
-                          );
-                        } else {
-                          return null;
-                        }
-                      })()}
+                    const status = countPresent(item.rawStartTime, item.rawEndTime);
+                    if(status === "early"){
+                      return <NotYet>Sắp diễn ra</NotYet>
+                    } else if(status === "now"){
+                      return <Now>Đang diễn ra</Now>
+                    } else if(status === "end"){
+                      return <Done>Đã kết thúc</Done>
+                    }else{
+                      return <NotYet>Còn {status} phút</NotYet>
+                    }
+                  })()}
                 </ScheduleContainer>
               </ScheduleBox>
             ))}

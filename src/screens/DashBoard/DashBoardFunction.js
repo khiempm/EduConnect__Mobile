@@ -1,5 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
+import { fetcher } from "../../api/fetcher";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getTodayDate = () => {
   const today = new Date();
@@ -41,4 +43,17 @@ export const getStatusIcon = (status) => {
       case 'Nghỉ học': return 'calendar';
       default: return 'help-circle';
     }
+};
+
+export const getCouses = async () => {
+  try{
+    const teacherId = await AsyncStorage.getItem('teacherId');
+    const response = await fetcher(`Course/teacher/${teacherId}`);
+    if(response){
+      console.log(response);
+    }
+    return response;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách môn học:', error);
+  }
 };
