@@ -48,6 +48,7 @@ const AttendanceDetail = ({route, navigation}) => {
   const [selectedHomework, setSelectedHomework] = useState(homeworkExist);
   const [note, setNote] = useState(noteExist || "");
   const [selectedFocus, setSelectedFocus] = useState(focusExist);
+
   const toggleTag = (tag, selected, setSelected) => {
     if (selected === tag) {
       setSelected("");
@@ -68,6 +69,8 @@ const AttendanceDetail = ({route, navigation}) => {
 
       {/* Title */}
       <Title>{studentName}</Title>
+
+      {/* Focus */}
       <SectionTitle>Thái độ học tập của học sinh</SectionTitle>
       <TagContainer>
         {focusTags.map((tag) => (
@@ -79,7 +82,7 @@ const AttendanceDetail = ({route, navigation}) => {
         ))}
       </TagContainer>
 
-      {/* Like tags */}
+      {/* Homework */}
       <SectionTitle>Chuẩn bị bài học trước khi đến lớp</SectionTitle>
       <TagContainer>
         {homeworkTags.map((tag) => (
@@ -93,13 +96,7 @@ const AttendanceDetail = ({route, navigation}) => {
 
       {/* Textarea */}
       <SectionTitle>Ghi chú</SectionTitle>
-      <Textarea
-        placeholderTextColor={black}
-        placeholder="Nhận xét việc học trên lớp của học sinh."
-        value={note}
-        onChangeText={setNote}
-        multiline
-      />
+      <Textarea placeholderTextColor={black} placeholder="Nhận xét việc học trên lớp của học sinh." value={note} onChangeText={setNote} multiline/>
 
       {/* Submit button */}
       <SubmitButton style={styles.submitButton} onPress={() => {
