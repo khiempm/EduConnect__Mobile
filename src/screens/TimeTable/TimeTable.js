@@ -36,6 +36,7 @@ function mapCourseToSchedule(course) {
     startTime: formatTime(course.startTime),
     endTime: formatTime(course.endTime),
     rawStartTime: course.startTime,
+    rawEndTime: course.endTime,
     subject: course.subjectName || "No subject",
     classId: course.classId || "",
     color: "#2D9CDB",
@@ -51,12 +52,9 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
   const countPresent = (startTime, endTime)=>{
     const now = new Date();
     const start = new Date(startTime);
-    const end = new Date(endTime || startTime);
-    if (endTime && item.rawEndTime) {
-      end.setHours(new Date(endTime).getHours());
-      end.setMinutes(new Date(endTime).getMinutes());
-    } else {
-      end.setHours(start.getHours() + 1);
+    const end = new Date(endTime);
+    if(end < start){
+      end.setDate(end.getDate() + 1);
     }
     if(now < start){
       const diffMs = start - now;
@@ -69,7 +67,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
     if(now >= start && now <= end){
       return "now";
     }
-    return "end";
+      return "end";
   }
 
   const getCourse = async () => {
