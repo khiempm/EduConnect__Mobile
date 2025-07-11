@@ -87,9 +87,10 @@ const Attendance = ({route, navigation}) => {
               <StudentCard key={uniqueId} onPress={() => navigation.navigate('AttendanceDetail', {
                 studentId: uniqueId,
                 studentName: student.fullName,
-                noteExist: student.note || "Co Note",
-                homeworkExist: student.homework || "Co home",
-                focusExist: student.focus || "Co focus"
+                noteExist: student.note || "",
+                homeworkExist: student.homework || "",
+                focusExist: student.focus || "",
+                onSave: handleStudentDetailSave
               })}>
                 <StudentName>{student.fullName}</StudentName>
                 <AttendanceButton

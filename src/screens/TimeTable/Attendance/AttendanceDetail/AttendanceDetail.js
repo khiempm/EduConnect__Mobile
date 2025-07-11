@@ -29,25 +29,30 @@ import { Colors } from "../../../../constant/color";
 
 const { primary, brand, black } = Colors;
 
-const likeTags = [
+const homeworkTags = [
   "Hoàn thành bài tốt",
   "Có chuẩn bị bài",
   "Cần cải thiện thêm",
   "Chưa chuẩn bị bài",
 ];
 
-const AttendanceDetail = ({route, navigation}) => {
-  const {studentId, studentName, onSave, noteExist, homeworkExist, focusExist} = route.params;
-  const [focus, setFocus] = useState(focusExist);
-  const [selectedHomework, setSelectedHomework] = useState(homeworkExist);
-  const [note, setNote] = useState(noteExist);
-  console.log("asdadf",noteExist, homeworkExist, focusExist, studentId, studentName);
+const focusTags = [
+  "Rất tốt",
+  "Tốt",
+  "Trung bình",
+  "Kém",
+];
 
+const AttendanceDetail = ({route, navigation}) => {
+  const {studentId, studentName, noteExist, homeworkExist, focusExist, onSave} = route.params;
+  const [selectedHomework, setSelectedHomework] = useState(homeworkExist);
+  const [note, setNote] = useState(noteExist || "");
+  const [selectedFocus, setSelectedFocus] = useState(focusExist);
   const toggleTag = (tag, selected, setSelected) => {
-    if (selected.includes(tag)) {
-      setSelected(selected.filter((t) => t !== tag));
+    if (selected === tag) {
+      setSelected("");
     } else {
-      setSelected([...selected, tag]);
+      setSelected(tag);
     }
   };
 
@@ -63,34 +68,23 @@ const AttendanceDetail = ({route, navigation}) => {
 
       {/* Title */}
       <Title>{studentName}</Title>
-      <Subtitle>Thái độ học tập của học sinh</Subtitle>
-
-      {/* Rating */}
-      <Star style={styles.stars}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <TouchableOpacity key={i} onPress={() => setFocus(i)}>
-            <Ionicons
-              name={i <= focus ? "star" : "star-outline"}
-              size={36}
-              color={brand}
-              style={{ marginHorizontal: 2 }}
-            />
-          </TouchableOpacity>
+      <SectionTitle>Thái độ học tập của học sinh</SectionTitle>
+      <TagContainer>
+        {focusTags.map((tag) => (
+          <Tag key={tag} style={selectedFocus === tag && styles.tagSelected} onPress={() => toggleTag(tag, selectedFocus, setSelectedFocus)}>
+            <TagText style={selectedFocus === tag && styles.tagTextSelected}>
+              {tag}
+            </TagText>
+          </Tag>
         ))}
-      </Star>
+      </TagContainer>
 
       {/* Like tags */}
       <SectionTitle>Chuẩn bị bài học trước khi đến lớp</SectionTitle>
       <TagContainer>
-        {likeTags.map((tag) => (
-          <Tag
-            key={tag}
-            style={selectedHomework.includes(tag) && styles.tagSelected}
-            onPress={() => toggleTag(tag, selectedHomework, setSelectedHomework)}
-          >
-            <TagText
-              style={selectedHomework.includes(tag) && styles.tagTextSelected}
-            >
+        {homeworkTags.map((tag) => (
+          <Tag key={tag} style={selectedHomework === tag && styles.tagSelected} onPress={() => toggleTag(tag, selectedHomework, setSelectedHomework)}>
+            <TagText style={selectedHomework === tag && styles.tagTextSelected}>
               {tag}
             </TagText>
           </Tag>
@@ -109,12 +103,13 @@ const AttendanceDetail = ({route, navigation}) => {
 
       {/* Submit button */}
       <SubmitButton style={styles.submitButton} onPress={() => {
+        console.log(studentId, note, selectedHomework, selectedFocus);
         if (onSave) {
           onSave({
-            studentId,
-            note,
+            studentId: studentId,
+            note: note,
             homework: selectedHomework,
-            focus
+            focus: selectedFocus
           });
         }
         navigation.goBack();

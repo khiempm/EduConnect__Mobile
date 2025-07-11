@@ -59,7 +59,13 @@ export const useAttendance = (route, navigation) => {
               : student
           )
         );
-        navigation.setParams({ detailStudentId: undefined, detailNote: undefined, detailHomework: undefined, detailFocus: undefined });
+
+        navigation.setParams({ 
+          detailStudentId: undefined, 
+          detailNote: undefined, 
+          detailHomework: undefined, 
+          detailFocus: undefined 
+        });
       }
     });
     return unsubscribe;
@@ -108,8 +114,8 @@ export const useAttendance = (route, navigation) => {
         courseId: courseId,
         participation: participation,
         note: student.note || "",
-        homework: (student.homework || "").toString(),
-        focus: (student.focus || "").toString(),
+        homework: student.homework || "",
+        focus: student.focus || "",
       };
     });
     try {
