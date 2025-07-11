@@ -37,10 +37,11 @@ const likeTags = [
 ];
 
 const AttendanceDetail = ({route, navigation}) => {
-  const {studentId, studentName, onSave} = route.params;
-  const [focus, setFocus] = useState(0 );
-  const [selectedHomework, setSelectedHomework] = useState("Có chuẩn bị bài");
-  const [note, setNote] = useState("");
+  const {studentId, studentName, onSave, noteExist, homeworkExist, focusExist} = route.params;
+  const [focus, setFocus] = useState(focusExist);
+  const [selectedHomework, setSelectedHomework] = useState(homeworkExist);
+  const [note, setNote] = useState(noteExist);
+  console.log("asdadf",noteExist, homeworkExist, focusExist, studentId, studentName);
 
   const toggleTag = (tag, selected, setSelected) => {
     if (selected.includes(tag)) {
