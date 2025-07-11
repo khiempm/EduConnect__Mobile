@@ -86,26 +86,28 @@ const Attendance = ({route, navigation}) => {
   }
   useEffect(() => {
     getStudent();
-    console.log(courseId);
   }, []);
 
   const handleSave = async () => {
     // Tạo mảng attendanceData từ students và attendance state
     const attendanceData = students.map(student => {
       const details = studentDetails[student.studentId || student.id] || {};
+      // Chuyển đổi participation sang tiếng Việt
+      let participationStatus = attendance[student.studentId || student.id] || "absent";
+      let participation = "Vắng mặt";
+      if (participationStatus === "present") participation = "Có mặt";
+      else if (participationStatus === "late") participation = "Đi trễ";
       return {
         atID: "",
         studentId: student.studentId || student.id,
         courseId: courseId,
-        participation: attendance[student.studentId || student.id] || "absent",
+        participation: participation,
         note: details.note || "",
         homework: (details.homework || "").toString(),
         focus: (details.focus || "").toString(),
       };
     });
     try {
-      // Gọi API POST ở đây, ví dụ:
-      console.log(attendanceData);
       const response = await postData('Attendance', attendanceData);
       if(response){
         console.log(response);

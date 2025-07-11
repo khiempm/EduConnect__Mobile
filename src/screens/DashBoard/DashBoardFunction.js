@@ -1,13 +1,12 @@
-import React from "react";
 import { Alert } from "react-native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { compareDate, formatDate, formatTime, getPresentCourse, sortByStartTimeDesc } from "../../constant/formatTime";
+import { compareDate, formatTime, getPresentCourse, sortByStartTimeDesc } from "../../constant/formatTime";
 
 function mapCourseToSchedule(course) {
   return {
-    startTime:course.startTime,
-    endTime: course.endTime,
+    startTime:formatTime(course.startTime),
+    endTime: formatTime(course.endTime),
     subject: course.subjectName || "Chưa có tên môn học",
     classId: course.classId || "",
     status: course.status,
@@ -31,20 +30,20 @@ export const handleNotificationPress = (notification) => {
   Alert.alert(
     "Chi tiết thông báo",
     `Học sinh: ${notification.studentName}\n
-    Lớp: ${notification.className}\n
-    Môn học: ${notification.subject}\n
-    Thời gian: ${notification.time}\n
-    Trạng thái: ${notification.status}\n
-    Lý do: ${notification.reason}`,
+    Môn học: ${notification.courseName}\n
+    Thời gian: ${notification.startTime} - ${notification.endTime}\n
+    Trạng thái: ${notification.participation}\n
+    Nhắc nhở: ${notification.note}\n
+    Tập trung: ${notification.focus}\n
+    Bài tập: ${notification.homework}`,
     [{ text: "Đóng", style: "default" }]
   );
 };
 
 export const getPriorityColor = (priority) => {
     switch(priority) {
-      case 'high': return '#FF6B6B';
-      case 'medium': return '#FFA726';
-      case 'low': return '#66BB6A';
+      case 'Vắng mặt': return '#FF6B6B';
+      case 'Đi trễ': return '#FFA726';
       default: return '#9E9E9E';
     }
   };
@@ -52,8 +51,7 @@ export const getPriorityColor = (priority) => {
 export const getStatusIcon = (status) => {
     switch(status) {
       case 'Vắng mặt': return 'close-circle';
-      case 'Đi muộn': return 'time';
-      case 'Nghỉ học': return 'calendar';
+      case 'Đi trễ': return 'time';
       default: return 'help-circle';
     }
 };
@@ -68,12 +66,109 @@ export const getCourses = async () => {
       const presentCourses = getPresentCourse(mapped);
       const todayCourses = compareDate(presentCourses, today);
       const sortedCourses = sortByStartTimeDesc(todayCourses);
+      const unPresentStudent = await getAttendance(sortedCourses);
+      const student = await getStudent(unPresentStudent);
       return {
-        course: sortedCourses[0],
-        numberOfCourse: compareDate(mapped, today).length
+        listCourse: sortedCourses,
+        numberOfCourse: compareDate(mapped, today).length,
+        listUnPresentStudent: student,
+        classId: classId
       }; 
     }
   } catch (error) {
     console.error('Lỗi khi lấy danh sách môn học:', error);
   }
 };
+
+export const getClassName = async () => {
+  const classId = await AsyncStorage.getItem('classInfo');
+  const response = await fetcher(`Classroom/${classId}`);
+  if(response){
+    return response.className;
+  }
+}
+
+const getAttendance = async (courses) => {
+  try{
+    const listStudentUnPresent = await Promise.all(
+      courses.map(async (course) => {
+       const response = await fetcher(`Attendance/course/${course.courseId}`);
+        if(response){
+          return response.map(item => {
+            return {
+              id: item.atID,
+              studentId: item.studentId,
+              courseId: course.courseId,
+              participation: item.participation,
+              note: item.note,
+              homework: item.homework,
+              focus: item.focus,
+              courseName: course.subject,
+              startTime: course.startTime,
+              endTime: course.endTime
+            }
+          });
+        }else{
+          console.log("Lỗi khi lấy danh sách học sinh vắng mặt:", error);
+        }
+      })
+    );
+    const unPresentStudent = listStudentUnPresent.flat().filter(item => item.participation !== 'Có mặt');
+    return unPresentStudent;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách học sinh vắng mặt:', error);
+  }
+}
+
+const getStudent = async (list) => {
+  try{
+    const classId = await AsyncStorage.getItem('classInfo');
+    const response = await fetcher(`Classroom/${classId}/students`);
+    if(response){
+      const studentInfo = list.map(item => {
+        const student = response.find(student => student.studentId === item.studentId);
+        return {
+          id: item.id,
+          studentId: item.studentId,
+          courseId: item.courseId,
+          participation: item.participation,
+          note: item.note,
+          homework: item.homework,
+          focus: item.focus,
+          studentName: student.fullName,
+          courseName: item.courseName,
+          startTime: item.startTime,
+          endTime: item.endTime
+        };
+      });
+      return studentInfo;
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách học sinh:', error);
+  }
+}
+
+export const getNumberOfStudent = async () => {
+  try {
+    const classId = await AsyncStorage.getItem('classInfo');
+    const response = await fetcher(`Classroom/${classId}/students`);
+    if(response){
+      return response.length.toString();
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy số lượng học sinh:', error);
+  }
+}
+
+export const getTodayStudent = async (courseId) => {
+  try {
+    const response = await fetcher(`Attendance/course/${courseId}`);
+    if(response){
+      const presentStudent = response.filter(item => item.participation === 'Có mặt');
+      const number = presentStudent.length;
+      return number.toString();
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy số lượng học sinh:', error);
+  }
+}

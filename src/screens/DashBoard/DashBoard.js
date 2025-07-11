@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from "react";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import {
   getTodayDate,
@@ -6,6 +7,9 @@ import {
   getPriorityColor,
   getStatusIcon,
   getCourses,
+  getClassName,
+  getNumberOfStudent,
+  getTodayStudent,
 } from "./DashBoardFunction";
 import {
   ContainerDashBoard,
@@ -32,63 +36,46 @@ import {
   StatusText,
   NotificationDetails
 } from "../../constant/styleDashBoard";
+import { Text } from 'react-native';
+
+
+// interface student [{ 
+//   id: string,
+//   studentId: string,
+//   courseId: string,
+//   participation: string,
+//   note: string,
+//   homework: string,
+//   focus: string,
+//   studentName: string,
+//   courseName: string,
+//   startTime: string,
+//   endTime: string
+// }]
+
+
 const Dashboard = () => {
   // Dữ liệu mẫu về tiết học của học sinh trong ngày
-  const [course, setCourse] = useState({});
   const [numberOfTodayCourse, setNumberOfTodayCourse] = useState(0);
-  useEffect(() => {
-    const fetchData = async () => {
-      const courses = await getCourses();
-      const {course, numberOfCourse} = courses;
-      setCourse(course);
-      setNumberOfTodayCourse(numberOfCourse);
-    };
-    fetchData();
-  }, []);
-
-  const todayClasses = [
-    // {
-    //   id: 1,
-    //   studentName: "Nguyễn Văn A",
-    //   className: "10A1",
-    //   subject: "Toán học",
-    //   time: "08:00 - 09:00",
-    //   status: "Vắng mặt",
-    //   reason: "Bị ốm",
-    //   priority: "high",
-    // },
-    // {
-    //   id: 2,
-    //   studentName: "Trần Thị B",
-    //   className: "10A1",
-    //   subject: "Văn học",
-    //   time: "09:00 - 10:00",
-    //   status: "Đi muộn",
-    //   reason: "Tắc đường",
-    //   priority: "medium",
-    // },
-    // {
-    //   id: 3,
-    //   studentName: "Lê Văn C",
-    //   className: "10A2",
-    //   subject: "Tiếng Anh",
-    //   time: "10:00 - 11:00",
-    //   status: "Nghỉ học",
-    //   reason: "Có việc gia đình",
-    //   priority: "low",
-    // },
-    // {
-    //   id: 4,
-    //   studentName: "Phạm Thị D",
-    //   className: "10A1",
-    //   subject: "Lịch sử",
-    //   time: "14:00 - 15:00",
-    //   status: "Vắng mặt",
-    //   reason: "Chưa rõ lý do",
-    //   priority: "high",
-    // },
-  ];
-
+  const [student, setStudent] = useState([]);
+  const [className, setClassName] = useState('');
+  const [numberPresent, setNumberPresent] = useState("");
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const course = await getCourses();
+        const {listCourse, numberOfCourse, listUnPresentStudent} = course;
+        const className = await getClassName();
+        setStudent(listUnPresentStudent);
+        setNumberOfTodayCourse(numberOfCourse);
+        setClassName(className);
+        const numberOfStudent = await getNumberOfStudent();
+        const numberOfPresentStudent = await getTodayStudent(listCourse[0].courseId);
+        setNumberPresent(numberOfPresentStudent + "/" + numberOfStudent);
+      };
+      fetchData();
+    }, [])
+  );
   return (
     <ContainerDashBoard>
       {/* Header */}
@@ -104,7 +91,7 @@ const Dashboard = () => {
       <SummaryContainer style={{ shadowOffset: { width: 0, height: 2 } }}>
         <SummaryCard>
           <MaterialIcons name="people" size={24} color="#FF6B6B" />
-          <SummaryNumber>34/36</SummaryNumber>
+          <SummaryNumber>{numberPresent}</SummaryNumber>
           <SummaryLabel>Học sinh</SummaryLabel>
         </SummaryCard>
         <SummaryCard>
@@ -123,29 +110,30 @@ const Dashboard = () => {
       <NotificationsContainer>
         <SectionHeader>
           <MaterialIcons name="notifications" size={20} color="#333" />
-          <SectionTitle>Thông báo tiết học hôm nay</SectionTitle>
+          {student.length > 0 ? <SectionTitle>Thông báo học sinh vắng mặt hôm nay</SectionTitle> 
+          : <SectionTitle>Hiện tại không có học sinh vắng mặt</SectionTitle>}
         </SectionHeader>
         
         <NotificationsList>
-          {todayClasses.map((notification) => (
+          {student.map((notification) => (
             <NotificationCard
-              style = {{shadowOffset: { width: 0, height: 1 }, borderLeftColor: getPriorityColor(notification.priority)}}
+              style = {{shadowOffset: { width: 0, height: 1 }, borderLeftColor: getPriorityColor(notification.participation)}}
               key={notification.id}
               onPress={() => handleNotificationPress(notification)}
             >
               <NotificationHeader>
                 <StudentInfo>
                   <StudentName>{notification.studentName}</StudentName>
-                  <ClassName>{notification.className}</ClassName>
+                  <ClassName>{className}</ClassName>
                 </StudentInfo>
                 <StatusContainer>
                   <Ionicons 
-                    name={getStatusIcon(notification.status)} 
+                    name={getStatusIcon(notification.participation)} 
                     size={20} 
-                    color={getPriorityColor(notification.priority)} 
+                    color={getPriorityColor(notification.participation)} 
                   />
-                  <StatusText style={{ color: getPriorityColor(notification.priority) }}>
-                    {notification.status}
+                  <StatusText style={{ color: getPriorityColor(notification.participation) }}>
+                    {notification.participation}
                   </StatusText>
                 </StatusContainer>
               </NotificationHeader>
@@ -153,15 +141,15 @@ const Dashboard = () => {
               <NotificationDetails>
                 <DetailRow>
                   <MaterialIcons name="book" size={16} color="#666" />
-                  <DetailText>{notification.subject}</DetailText>
+                  <DetailText>{notification.courseName}</DetailText>
                 </DetailRow>
                 <DetailRow>
                   <MaterialIcons name="schedule" size={16} color="#666" />
-                  <DetailText>{notification.time}</DetailText>
+                  <DetailText>{notification.startTime} - {notification.endTime}</DetailText>
                 </DetailRow>
                 <DetailRow>
                   <MaterialIcons name="info" size={16} color="#666" />
-                  <DetailText>{notification.reason}</DetailText>
+                  <DetailText>{notification.note || 'Không có ghi chú'}</DetailText>
                 </DetailRow>
               </NotificationDetails>
             </NotificationCard>
