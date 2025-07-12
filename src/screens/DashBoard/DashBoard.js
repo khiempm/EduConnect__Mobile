@@ -59,19 +59,21 @@ const Dashboard = () => {
   const [numberOfTodayCourse, setNumberOfTodayCourse] = useState(0);
   const [student, setStudent] = useState([]);
   const [className, setClassName] = useState('');
-  const [numberPresent, setNumberPresent] = useState("");
+  const [numberPresent, setNumberPresent] = useState("0");
+  const [numberStudent, setNumberStudent] = useState("");
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
         const course = await getCourses();
         const {listCourse, numberOfCourse, listUnPresentStudent} = course;
         const className = await getClassName();
+        const numberOfStudent = await getNumberOfStudent();
+        setNumberStudent(numberOfStudent);
         setStudent(listUnPresentStudent);
         setNumberOfTodayCourse(numberOfCourse);
         setClassName(className);
-        const numberOfStudent = await getNumberOfStudent();
         const numberOfPresentStudent = await getTodayStudent(listCourse[0].courseId);
-        setNumberPresent(numberOfPresentStudent + "/" + numberOfStudent);
+        setNumberPresent(numberOfPresentStudent)
       };
       fetchData();
     }, [])
@@ -91,7 +93,7 @@ const Dashboard = () => {
       <SummaryContainer style={{ shadowOffset: { width: 0, height: 2 } }}>
         <SummaryCard>
           <MaterialIcons name="people" size={24} color="#FF6B6B" />
-          <SummaryNumber>{numberPresent}</SummaryNumber>
+          <SummaryNumber>{numberPresent}/{numberStudent}</SummaryNumber>
           <SummaryLabel>Học sinh</SummaryLabel>
         </SummaryCard>
         <SummaryCard>
