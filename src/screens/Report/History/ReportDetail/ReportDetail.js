@@ -19,7 +19,6 @@ const ReportDetail = ({ route }) => {
   const { timeDetail, loading, error, getReportDetail } = useReportDetail();
   const { report } = route.params;
   const navigation = useNavigation();
-
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -38,7 +37,9 @@ const ReportDetail = ({ route }) => {
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Loại báo cáo: </Text>
-        <Text style={styles.value}>{"Chưa có dữ liệu"}</Text>
+        <Text style={styles.value}>
+          {loading ? "Đang tải..." : error ? "Lỗi tải dữ liệu" : timeDetail ? timeDetail.mode : "Không có dữ liệu"}
+        </Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Ngày bắt đầu: </Text>
