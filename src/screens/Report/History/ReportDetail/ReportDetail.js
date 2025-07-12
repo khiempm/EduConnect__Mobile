@@ -1,25 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-const StatusBarHeight = Constants.statusBarHeight;
 import {HeaderTitle, BackButton } from "../../../../constant/styleAttendanceList";
 import { Colors } from "../../../../constant/color";
-const { brand } = Colors;
-// Dữ liệu mẫu
-const report = {
-  id: "1",
-  title: "Báo cáo tháng 5",
-  type: "Tháng",
-  timeRange: "01/05/2024 - 31/05/2024",
-  className: "10A1",
-  teacher: "Nguyễn Văn A",
-  description: "Báo cáo tổng kết tình hình học tập, điểm danh và hoạt động của lớp 10A1 trong tháng 5. Lớp duy trì sĩ số tốt, các hoạt động ngoại khoá diễn ra sôi nổi, học sinh tích cực tham gia. Một số học sinh cần cải thiện ý thức học tập.",
-};
+import { useReportDetail } from "./useReportDetail";
+import { formatDate } from "../../../../constant/formatTime";
 
-const ReportDetail = () => {
+
+const StatusBarHeight = Constants.statusBarHeight;
+const { brand } = Colors;
+
+const ReportDetail = ({ route }) => {
+  useEffect(() => {
+    getReportDetail(report);
+  }, [route]);
+  const { timeDetail, loading, error, getReportDetail } = useReportDetail();
+  const { report } = route.params;
   const navigation = useNavigation();
+
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -29,21 +29,40 @@ const ReportDetail = () => {
       <HeaderTitle style={styles.title}>{report.title}</HeaderTitle>
       </View>
       <View style={styles.row}>
-        <Text style={styles.label}>Loại báo cáo: </Text>
-        <Text style={styles.value}>{report.type}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Khoảng thời gian: </Text>
-        <Text style={styles.value}>{report.timeRange}</Text>
-      </View>
-      <View style={styles.row}>
         <Text style={styles.label}>Lớp: </Text>
         <Text style={styles.value}>{report.className}</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Giáo viên chủ nhiệm: </Text>
-        <Text style={styles.value}>{report.teacher}</Text>
+        <Text style={styles.value}>{report.teacherName}</Text>
       </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Loại báo cáo: </Text>
+        <Text style={styles.value}>{"Chưa có dữ liệu"}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Ngày bắt đầu: </Text>
+        <Text style={styles.value}>
+          {loading ? "Đang tải..." : error ? "Lỗi tải dữ liệu" : timeDetail ? formatDate(timeDetail.startTime) : "Không có dữ liệu"}
+        </Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Ngày kết thúc: </Text>
+        <Text style={styles.value}>
+          {loading ? "Đang tải..." : error ? "Lỗi tải dữ liệu" : timeDetail ? formatDate(timeDetail.endTime) : "Không có dữ liệu"}
+        </Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Ngày tạo: </Text>
+        <Text style={styles.value}>
+          {loading ? "Đang tải..." : error ? "Lỗi tải dữ liệu" : timeDetail ? formatDate(timeDetail.createdAt) : "Không có dữ liệu"}
+        </Text>
+      </View>
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
       <Text style={styles.sectionTitle}>Mô tả báo cáo</Text>
       <Text style={styles.description}>{report.description}</Text>
     </ScrollView>
@@ -95,6 +114,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
 

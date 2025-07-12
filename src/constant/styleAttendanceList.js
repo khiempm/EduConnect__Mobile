@@ -1,9 +1,7 @@
 import styled from "styled-components/native";
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Colors } from "./color";
-import { Ionicons } from "@expo/vector-icons";
 
-const { background, primary, black, darkLight, brand, active, green} = Colors;
+const { background, primary, black, brand, active, green} = Colors;
 
 export const ContainerAttendance = styled.View`
   flex: 1;

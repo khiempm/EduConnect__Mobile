@@ -1,39 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
 import {HeaderTitle, BackButton } from "../../../constant/styleAttendanceList";
 import { Colors } from "../../../constant/color";
+import { useReportHistory } from "./useReportHistory";
 const { brand } = Colors;
-// Dữ liệu mẫu
-const reports = [
-  {
-    id: "1",
-    title: "Báo cáo tháng 5",
-    createdAt: "2024-05-30T10:00:00Z",
-    className: "10A1",
-    teacher: "Nguyễn Văn A",
-  },
-  {
-    id: "2",
-    title: "Báo cáo tháng 4",
-    createdAt: "2024-04-28T09:30:00Z",
-    className: "10A2",
-    teacher: "Nguyễn Văn A",
-  },
-  {
-    id: "3",
-    title: "Báo cáo học kỳ 1",
-    createdAt: "2024-01-15T14:20:00Z",
-    className: "11B1",
-    teacher: "Nguyễn Văn A",
-  },
-];
 
 const StatusBarHeight = Constants.statusBarHeight;
 const ReportHistory = () => {
   const navigation = useNavigation();
+  const { listReports, getListReport } = useReportHistory();
+
+  useEffect(() => {
+    getListReport();
+  }, []);
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -42,11 +24,11 @@ const ReportHistory = () => {
       </BackButton>
       <HeaderTitle style={styles.header}>Lịch sử báo cáo</HeaderTitle>
       </View>
-      {reports.map((report) => (
-        <TouchableOpacity key={report.id} style={styles.card} onPress={() => navigation.navigate('ReportDetail', { report })}>
+      {listReports.map((report) => (
+        <TouchableOpacity key={report.reportId} style={styles.card} onPress={() => navigation.navigate('ReportDetail', { report })}>
           <Text style={styles.title}>{report.title}</Text>
           <Text style={styles.info}>Lớp: {report.className}</Text>
-          <Text style={styles.info}>Giáo viên chủ nhiệm: {report.teacher}</Text>
+          <Text style={styles.info}>Giáo viên chủ nhiệm: {report.teacherName}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
