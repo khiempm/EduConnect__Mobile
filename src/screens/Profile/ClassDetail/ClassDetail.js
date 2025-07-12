@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetcher } from "../../../api/fetcher";
-
-const StatusBarHeight = Constants.statusBarHeight;
-
-
+import {
+  ContainerAttendance,
+  HeaderContainer,
+  HeaderRow,
+  BackButton,
+  HeaderTitle,
+  LessonInfo,
+  LessonRow,
+  LessonIcon,
+  LessonText,
+  StudentList,
+  StudentCard,
+  StudentName,
+} from "../../../constant/styleAttendanceList";
+import { Colors } from "../../../constant/color";
+import { formatDate } from "../../../constant/formatTime";
+const {primary, active, darkLight} = Colors;
 const ClassDetail = ({route}) => {
   const navigation = useNavigation();
   const [students, setStudents] = useState([]);
   const [teacherName, setTeacherName] = useState("");
-  const {classId, className} = route.params;
+  const {classId, className, year} = route.params;
   const getStudent = async (classId) => {
     try {
         const teacherName = await AsyncStorage.getItem("teacherName");
@@ -30,85 +42,47 @@ const ClassDetail = ({route}) => {
     getStudent(classId);
   }, []);
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={28} color="#2D9CDB" />
-      </TouchableOpacity>
-      <View style={styles.headerBox}>
-        <Text style={styles.className}>Lớp: {className}</Text>
-        <Text style={styles.teacher}>Giáo viên chủ nhiệm: {teacherName}</Text>
-      </View>
-      <Text style={styles.sectionTitle}>Danh sách học sinh</Text>
-      <View style={styles.studentList}>
-        {students.map((student, idx) => (
-          <View key={student.id || idx} style={styles.studentCard}>
-            <Text style={styles.studentName}>{student.fullName}</Text>
-            <Text style={styles.studentInfo}>Ngày sinh: {student.dateOfBirth}</Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-    paddingTop: StatusBarHeight+10,
-  },
-  backBtn: {
-    marginBottom: 10,
-    alignSelf: 'flex-start',
-    padding: 4,
-  },
-  headerBox: {
-    marginBottom: 18,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  className: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2D9CDB',
-    marginBottom: 6,
-  },
-  teacher: {
-    fontSize: 16,
-    color: '#333',
-  },
-  sectionTitle: {
-    fontWeight: 'bold',
-    fontSize: 17,
-    color: '#222',
-    marginBottom: 8,
-    marginTop: 10,
-  },
-  studentList: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-  },
-  studentCard: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingVertical: 10,
-  },
-  studentName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  studentInfo: {
-    fontSize: 14,
-    color: '#555',
-  },
-});
+    <ContainerAttendance>
+      <HeaderContainer>
+        <HeaderRow>
+          <BackButton onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={28} color={primary} />
+          </BackButton>
+          <HeaderTitle>Danh sách học sinh</HeaderTitle>
+        </HeaderRow>
+        <LessonInfo>
+          <LessonRow>
+           <LessonIcon>
+            <Ionicons name="school" size={20} color={active} />
+           </LessonIcon>
+          <LessonText>Lớp: {className}</LessonText>
+        </LessonRow>
+        <LessonRow>
+           <LessonIcon>
+            <Ionicons name="person" size={20} color={active} />
+           </LessonIcon>
+          <LessonText>GV chủ nhiệm:  {teacherName}</LessonText>
+        </LessonRow>
+        <LessonRow>
+           <LessonIcon>
+            <Ionicons name="calendar" size={20} color={active} />
+           </LessonIcon>
+          <LessonText>Năm học:  {year}</LessonText>
+        </LessonRow>
+      </LessonInfo>
+      </HeaderContainer>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <StudentList>
+          {students.map((student) => (
+            <StudentCard style={{flexDirection: "column", alignItems: "flex-start"}} key={student.id}>
+              <StudentName>{student.fullName}</StudentName>
+              <StudentName style={{fontSize: 12, color: darkLight}}>Ngày sinh: {formatDate(student.dateOfBirth)}</StudentName>
+            </StudentCard>
+          ))}
+        </StudentList>
+      </ScrollView>
+    </ContainerAttendance>
+  )
+}
 
 export default ClassDetail;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { postData, fetcher, deleteData } from "../../../api/fetcher";
+import { postData, fetcher, deleteData, putData } from "../../../api/fetcher";
 
 export const useAttendance = (route, navigation) => {
   const {courseId, courseName, courseTime, courseEndTime, courseRoom, classId} = route.params;
@@ -121,7 +121,13 @@ export const useAttendance = (route, navigation) => {
     try {
       const response = await postData('Attendance', attendanceData);
       if(response){
-        console.log(response);
+        const status = await putData('Course/status', {
+          courseId: courseId,
+          status: "present"
+        });
+        if(status){
+          console.log("cập nhật trạng thái điểm danh thành công!");
+        }
       }
       alert("Đã lưu điểm danh!");
       navigation.goBack();

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   ContainerProfile,
@@ -22,7 +22,7 @@ import { Colors } from "../../constant/color";
 import useProfile from "./useProfile";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const { darkLight, black, primary } = Colors;
+const { darkLight, primary } = Colors;
 
 const Profile = () => {
   const { getProfile, email, name, getClasses, classes } = useProfile();
@@ -86,11 +86,11 @@ const Profile = () => {
             <ProfileTitle>Danh sách lớp</ProfileTitle>
           </Row>
           {classes.map((item, index) => (
-            <ClassItem key={index} onPress={() => navigation.navigate("ClassDetail", { classId: item.classId, className: item.className })}>
+            <ClassItem key={index} onPress={() => navigation.navigate("ClassDetail", { classId: item.classId, className: item.className, year: item.startDate.split('-')[0]+"-"+item.endDate.split('-')[0] })}>
               <ClassColorBar color="#A259D9" />
               <ClassItemContainer>
                 <ClassName>{item.className} - Lớp {item.className}</ClassName>
-                {/* <ClassTerm>Học kỳ: {item.semester} Năm học: {item.academicYear}</ClassTerm> */}
+                <ClassTerm>Năm học: {item.startDate.split('-')[0]} - {item.endDate.split('-')[0]}</ClassTerm>
               </ClassItemContainer>
             </ClassItem>
           ))}

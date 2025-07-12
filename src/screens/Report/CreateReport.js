@@ -3,7 +3,6 @@ import {
   ScrollView,
   Alert,
   Modal,
-  View,
   TouchableOpacity,
   Text,
 } from "react-native";
@@ -44,11 +43,9 @@ import {
   getReportTypes,
   getSemesters,
   getAcademicYears,
-  formatReportData,
-  validateReportData,
-  getReportPreview,
 } from "./CreateReportFunction";
 import { Colors } from "../../constant/color";
+import { formatDate, formatMonth } from "../../constant/formatTime";
 const CreateReport = ({ navigation }) => {
   const {
     primary,
@@ -88,21 +85,6 @@ const CreateReport = ({ navigation }) => {
     }
   }, []);
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const formatMonth = (date) => {
-    return date.toLocaleDateString("vi-VN", {
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   const handleReportTypeSelect = (type) => {
     setSelectedReportType(type);
   };
@@ -132,63 +114,8 @@ const CreateReport = ({ navigation }) => {
   };
 
   const handleGenerateReport = async () => {
-    const reportData = {
-      type: selectedReportType,
-      date: selectedDate,
-      month: selectedMonth,
-      semester: selectedSemester,
-      year: selectedYear,
-    };
-
-    // Validate the report data
-    const validation = validateReportData(reportData);
-    if (!validation.isValid) {
-      Alert.alert("Lỗi", validation.message);
-      return;
-    }
-
-    try {
-      // Format the data for API
-      const formattedData = formatReportData(reportData);
-
-      // Get report preview
-      const preview = getReportPreview(reportData);
-
-      // Show confirmation dialog
-      Alert.alert("Xác nhận tạo báo cáo", `Bạn có muốn tạo ${preview}?`, [
-        {
-          text: "Hủy",
-          style: "cancel",
-        },
-        {
-          text: "Tạo báo cáo",
-          onPress: async () => {
-            try {
-              // Here you would call your actual API
-              // const result = await generateReport(formattedData);
-
-              // For now, we'll simulate the API call
-              await new Promise((resolve) => setTimeout(resolve, 2000));
-
-              Alert.alert(
-                "Thành công",
-                "Báo cáo đã được tạo thành công. Bạn sẽ nhận được thông báo khi có thể tải xuống.",
-                [
-                  {
-                    text: "OK",
-                    onPress: () => navigation.goBack(),
-                  },
-                ]
-              );
-            } catch (error) {
-              Alert.alert(
-                "Lỗi",
-                "Không thể tạo báo cáo. Vui lòng thử lại sau."
-              );
-            }
-          },
-        },
-      ]);
+    try{
+      Alert.alert("Thành công", "Báo cáo đã được tạo thành công");
     } catch (error) {
       Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo báo cáo");
     }
@@ -210,7 +137,6 @@ const CreateReport = ({ navigation }) => {
 
   const renderMonthPicker = () => {
     if (selectedReportType !== "monthly") return null;
-
     return (
       <DatePickerContainer>
         <DatePickerTitle>Chọn tháng báo cáo</DatePickerTitle>
@@ -224,7 +150,6 @@ const CreateReport = ({ navigation }) => {
 
   const renderSemesterPicker = () => {
     if (selectedReportType !== "semester") return null;
-
     return (
       <TimeContainer>
         <TimeTitle>Chọn học kỳ</TimeTitle>
@@ -240,7 +165,6 @@ const CreateReport = ({ navigation }) => {
 
   const renderYearPicker = () => {
     if (selectedReportType !== "yearly") return null;
-
     return (
       <TimeContainer>
         <TimeTitle>Chọn năm học</TimeTitle>
@@ -255,13 +179,11 @@ const CreateReport = ({ navigation }) => {
   return (
     <ReportContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          style={{ alignSelf: 'flex-end', marginBottom: 12, marginTop: 8, padding: 8, backgroundColor: '#2D9CDB', borderRadius: 6 }}
-          onPress={() => navigation.navigate('ReportHistory')}
-        >
+        <ReportHeader>
+        <TouchableOpacity style={{ alignSelf: 'flex-end', marginBottom: 12, padding: 8, backgroundColor: brand, borderRadius: 6 }}
+          onPress={() => navigation.navigate('ReportHistory')}>
           <Text style={{ color: '#fff', fontWeight: 'bold' }}>Lịch sử báo cáo</Text>
         </TouchableOpacity>
-        <ReportHeader>
           <ReportTitle>Tạo Báo Cáo Tự Động</ReportTitle>
           <ReportSubtitle>
             Chọn loại báo cáo và thời gian để tạo báo cáo tự động
@@ -291,20 +213,13 @@ const CreateReport = ({ navigation }) => {
             ))}
           </ReportTypeGrid>
         </ReportTypeContainer>
-
         {renderDatePicker()}
         {renderMonthPicker()}
         {renderSemesterPicker()}
         {renderYearPicker()}
-
         <GenerateButton onPress={handleGenerateReport}>
           <GenerateButtonText>Tạo Báo Cáo</GenerateButtonText>
         </GenerateButton>
-
-        <InfoText>
-          Báo cáo sẽ được tạo tự động dựa trên dữ liệu điểm danh và học tập của
-          học sinh
-        </InfoText>
       </ScrollView>
 
       {/* Date Picker Modal */}
@@ -327,13 +242,33 @@ const CreateReport = ({ navigation }) => {
         />
       )}
 
+      {/* Semester Picker Modal */} 
+      {showSemesterPicker && (
+       <Modal visible={showSemesterPicker} transparent={true} animationType="slide">
+        <ModalContainer>
+          <ModalContent>
+            <ModalTitle>Chọn Học Kỳ</ModalTitle>
+            <ScrollView>
+              {semesters.map((semester) => (
+              <ModalItem key={semester.id} onPress={() => handleSemesterSelect(semester.name)}>
+                <ModalItemText>{semester.name}</ModalItemText>
+                {semester.isCurrent && (
+                <ModalItemSubText>(Kỳ hiện tại)</ModalItemSubText>
+                )}
+              </ModalItem>
+              ))}
+            </ScrollView>
+            <ModalCloseButton onPress={() => setShowSemesterPicker(false)}>
+              <ModalCloseButtonText>Hủy</ModalCloseButtonText>
+            </ModalCloseButton>
+          </ModalContent>
+        </ModalContainer>
+      </Modal> 
+      )}
+
       {/* Year Picker Modal */}
-      {showYearPicker && (
-        <Modal
-          visible={showYearPicker}
-          transparent={true}
-          animationType="slide"
-        >
+        {showYearPicker && (
+        <Modal visible={showYearPicker} transparent={true} animationType="slide">
           <ModalContainer>
             <ModalContent>
               <ModalTitle>Chọn Năm Học</ModalTitle>
@@ -357,35 +292,6 @@ const CreateReport = ({ navigation }) => {
           </ModalContainer>
         </Modal>
       )}
-
-      {/* Semester Picker Modal */}
-      <Modal
-        visible={showSemesterPicker}
-        transparent={true}
-        animationType="slide"
-      >
-        <ModalContainer>
-          <ModalContent>
-            <ModalTitle>Chọn Học Kỳ</ModalTitle>
-            <ScrollView>
-            {semesters.map((semester) => (
-              <ModalItem
-                key={semester.id}
-                onPress={() => handleSemesterSelect(semester.name)}
-              >
-                <ModalItemText>{semester.name}</ModalItemText>
-                {semester.isCurrent && (
-                  <ModalItemSubText>(Kỳ hiện tại)</ModalItemSubText>
-                )}
-              </ModalItem>
-            ))}
-            </ScrollView>
-            <ModalCloseButton onPress={() => setShowSemesterPicker(false)}>
-              <ModalCloseButtonText>Hủy</ModalCloseButtonText>
-            </ModalCloseButton>
-          </ModalContent>
-        </ModalContainer>
-      </Modal>
     </ReportContainer>
   );
 };
