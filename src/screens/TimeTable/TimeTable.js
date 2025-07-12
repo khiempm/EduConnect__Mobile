@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { PageTitle } from "../../constant/style";
 import {
@@ -25,7 +25,7 @@ import {
   ScheduleNote,
   SubjectContainer,
 } from "../../constant/styleTimeTable";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compareDate, formatDate, formatTime, sortByStartTimeAsc } from "../../constant/formatTime";
@@ -106,9 +106,11 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
     }
   };
   
-  useEffect(() => {
-    getCourse();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getCourse();
+    }, [])
+  );
 
   return (
     <ContainerTimeTable>
