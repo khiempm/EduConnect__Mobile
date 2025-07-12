@@ -57,7 +57,7 @@ const Login = () => {
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <StyledFormArea>
                 <MyTextInput
-                    label="Email Address"
+                    label="Tài Khoản"
                     icon="mail"
                     placeholder="johndoe@gmail.com"
                     placeholderTextColor={darkLight}
@@ -67,7 +67,7 @@ const Login = () => {
                     keyboardType="email-address"
                 />
                 <MyTextInput
-                    label="Password"
+                    label="Mật Khẩu"
                     icon="lock"
                     placeholder="* * * * * * * *"
                     placeholderTextColor={darkLight}
@@ -79,21 +79,15 @@ const Login = () => {
                     hidePassword={hidePassword}
                     setHidePassword={setHidePassword}
                 />
-                {errorMessage ? <Text style={{color: "red"}}>Username or password is incorrect</Text> : <MsgBox>...</MsgBox>}
+                {errorMessage ? <Text style={{color: "red"}}>Tài khoản hoặc mật khẩu không chính xác</Text> : <MsgBox>...</MsgBox>}
                 <StyledButton onPress={handleSubmit}>
-                  <ButtonText>Login</ButtonText>
+                  <ButtonText>Đăng Nhập</ButtonText>
                 </StyledButton>
                 <Line />
                 <StyledButton google={true} onPress={handleSubmit}>
                   <Fontisto name="google" size={25} color={primary} />
-                  <ButtonText google={true}>Sign in with Google</ButtonText>
+                  <ButtonText google={true}>Đăng Nhập Với Google</ButtonText>
                 </StyledButton>
-                <ExtraView>
-                    <ExtraText>Don't have an account?</ExtraText>
-                    <TextLink>
-                      <TextLinkContent onPress={() => navigation.navigate("SignUp")}>Sign up</TextLinkContent>
-                    </TextLink>
-                  </ExtraView>
             </StyledFormArea>
           )}
         </Formik>
