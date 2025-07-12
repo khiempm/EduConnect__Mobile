@@ -135,6 +135,13 @@ border-radius: 4px;
 background-color: ${red};
 margin-right: 4px;
 `;
+export const ScheduleDoneBadge = styled.View`
+width: 8px;
+height: 8px;
+border-radius: 4px;
+background-color: ${green};
+margin-right: 4px;
+`;
 
 export const Now = styled.Text`
   color: ${active};

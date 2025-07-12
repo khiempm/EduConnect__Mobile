@@ -24,6 +24,7 @@ import {
   ScheduleBadge,
   ScheduleNote,
   SubjectContainer,
+  ScheduleDoneBadge,
 } from "../../constant/styleTimeTable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
@@ -158,7 +159,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
                         <View
                           style={{ flexDirection: "row", alignItems: "center" }}
                         >
-                          <ScheduleBadge />
+                          {item.status === "present" ? <ScheduleDoneBadge /> : <ScheduleBadge />}
                           {item.status === "present" ?<ScheduleNote style={{color: "green"}}>đã điểm danh</ScheduleNote> : <ScheduleNote style={{color: "red"}}>Chưa điểm danh</ScheduleNote>}
                         </View>
                     </View>
