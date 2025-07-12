@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { fetcher, } from "../../api/fetcher";
+import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 const useProfile = () => {
     const [email, setEmail] = useState();
@@ -25,7 +24,6 @@ const useProfile = () => {
             const teacherId = await AsyncStorage.getItem("teacherId");
             const response =   await fetcher(`Classroom/teacher/${teacherId}`);
             if(response){
-                console.log(response);
                 setClasses(response);
             }
             return response;
