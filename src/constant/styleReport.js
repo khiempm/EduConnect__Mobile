@@ -1,21 +1,15 @@
 import styled from "styled-components/native";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Colors } from "./color";
+import Constants from "expo-constants";
 
-const {
-  primary,
-  secondary,
-  tertiary,
-  darkLight,
-  brand,
-  background,
-  active,
-} = Colors;
+const {primary, secondary, tertiary, darkLight, brand, background, active,} = Colors;
+const StatusBarHeight = Constants.statusBarHeight;
 
 export const ReportContainer = styled.View`
   flex: 1;
   background-color: ${background};
   padding: 20px;
+  margin-top: ${StatusBarHeight}px;
 `;
 
 export const ReportHeader = styled.View`

@@ -1,5 +1,7 @@
 // Report generation functions and utilities
 
+import { formatDate, formatMonth } from "../../constant/formatTime";
+
 export const generateReport = async (reportData) => {
   try {
     // This would be your actual API call to generate the report
@@ -157,10 +159,10 @@ export const getReportPreview = (reportData) => {
     case 'weekly':
       const weekStart = getWeekStart(date);
       const weekEnd = getWeekEnd(date);
-      return `Báo cáo tuần từ ${weekStart.toLocaleDateString('vi-VN')} đến ${weekEnd.toLocaleDateString('vi-VN')}`;
+      return `Báo cáo tuần từ ${formatDate(weekStart)} đến ${formatDate(weekEnd)}`;
     
     case 'monthly':
-      return `Báo cáo tháng ${month.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}`;
+      return `Báo cáo tháng ${formatMonth(month)}`;
     
     case 'semester':
       return `Báo cáo ${semester}`;

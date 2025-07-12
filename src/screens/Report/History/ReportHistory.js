@@ -3,7 +3,9 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
-
+import {HeaderTitle, BackButton } from "../../../constant/styleAttendanceList";
+import { Colors } from "../../../constant/color";
+const { brand } = Colors;
 // Dữ liệu mẫu
 const reports = [
   {
@@ -29,23 +31,20 @@ const reports = [
   },
 ];
 
-const formatDate = (isoString) => {
-  const date = new Date(isoString);
-  return date.toLocaleString();
-};
 const StatusBarHeight = Constants.statusBarHeight;
 const ReportHistory = () => {
   const navigation = useNavigation();
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={28} color="#2D9CDB" />
-      </TouchableOpacity>
-      <Text style={styles.header}>Lịch sử báo cáo</Text>
+      <View>
+      <BackButton style={styles.backBtn} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={28} color={brand} />
+      </BackButton>
+      <HeaderTitle style={styles.header}>Lịch sử báo cáo</HeaderTitle>
+      </View>
       {reports.map((report) => (
         <TouchableOpacity key={report.id} style={styles.card} onPress={() => navigation.navigate('ReportDetail', { report })}>
           <Text style={styles.title}>{report.title}</Text>
-          <Text style={styles.info}>Thời gian tạo: {formatDate(report.createdAt)}</Text>
           <Text style={styles.info}>Lớp: {report.className}</Text>
           <Text style={styles.info}>Giáo viên chủ nhiệm: {report.teacher}</Text>
         </TouchableOpacity>
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#2D9CDB',
+    color: brand,
   },
   card: {
     backgroundColor: '#fff',

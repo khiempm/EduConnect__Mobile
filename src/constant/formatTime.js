@@ -9,6 +9,12 @@ export const compareDate = (schedule, date) => {
         );
     })
 }
+export const formatMonth = (date) => {
+    return date.toLocaleDateString("vi-VN", {
+      month: "long",
+      year: "numeric",
+    });
+  };
 
 export const formatDate = (time) => {
     const selectedDate = new Date(time);

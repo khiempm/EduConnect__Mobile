@@ -4,6 +4,9 @@ import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 const StatusBarHeight = Constants.statusBarHeight;
+import {HeaderTitle, BackButton } from "../../../../constant/styleAttendanceList";
+import { Colors } from "../../../../constant/color";
+const { brand } = Colors;
 // Dữ liệu mẫu
 const report = {
   id: "1",
@@ -19,10 +22,12 @@ const ReportDetail = () => {
   const navigation = useNavigation();
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={28} color="#2D9CDB" />
-      </TouchableOpacity>
-      <Text style={styles.title}>{report.title}</Text>
+      <View>
+      <BackButton style={styles.backBtn} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={28} color={brand} />
+      </BackButton>
+      <HeaderTitle style={styles.title}>{report.title}</HeaderTitle>
+      </View>
       <View style={styles.row}>
         <Text style={styles.label}>Loại báo cáo: </Text>
         <Text style={styles.value}>{report.type}</Text>
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#2D9CDB',
+    color: brand,
     marginBottom: 16,
   },
   row: {
