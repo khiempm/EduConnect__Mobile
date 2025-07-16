@@ -37,6 +37,7 @@ import {
   NotificationDetails
 } from "../../constant/styleDashBoard";
 import { Text } from 'react-native';
+import Loading from '../../components/Loading';
 
 
 // interface student [{ 
@@ -81,6 +82,7 @@ const Dashboard = () => {
   return (
     <ContainerDashBoard>
       {/* Header */}
+
       <Header>
         <HeaderContent>
           <MaterialIcons name="dashboard" size={30} color="#fff" />
@@ -88,8 +90,8 @@ const Dashboard = () => {
         </HeaderContent>
         <DateText>{getTodayDate()}</DateText>
       </Header>
-
       {/* Summary Cards */}
+      {numberStudent.length === 0 ? <Loading visible={true} /> : (
       <SummaryContainer style={{ shadowOffset: { width: 0, height: 2 } }}>
         <SummaryCard>
           <MaterialIcons name="people" size={24} color="#FF6B6B" />
@@ -107,7 +109,7 @@ const Dashboard = () => {
           <SummaryLabel>Báo cáo</SummaryLabel>
         </SummaryCard>
       </SummaryContainer>
-
+      )}
       {/* Notifications List */}
       <NotificationsContainer>
         <SectionHeader>
@@ -158,6 +160,7 @@ const Dashboard = () => {
           ))}
         </NotificationsList>
       </NotificationsContainer>
+
     </ContainerDashBoard>
   );
 };

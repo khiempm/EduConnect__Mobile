@@ -27,9 +27,10 @@ import {
   ScheduleDoneBadge,
 } from "../../constant/styleTimeTable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { fetcher } from "../../api/fetcher";
+import { fetcher, fetcherWithParams } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compareDate, formatDate, formatTime, sortByStartTimeAsc } from "../../constant/formatTime";
+import Loading from "../../components/Loading";
 
 //chuyển đổi định dạng
 function mapCourseToSchedule(course) {
@@ -82,7 +83,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
           classIds.map(async classId => {
             if (!classId) return { classId, className: "" };
             try {
-              const res = await fetcher(`Classroom/${classId}`);
+              const res = await fetcherWithParams("Classroom",{classId: classId});
               return { classId, className: res?.className || "" };
             } catch {
               return { classId, className: "" };
@@ -133,6 +134,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
       </Header>
 
       {/* Schedule List */}
+      {schedules.length > 0 ? (
       <ScheduleList>
         <ScrollView style={{ width: "100%" }}>
           { filteredSchedules.map((item, idx) => (
@@ -181,6 +183,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
             ))}
         </ScrollView>
       </ScheduleList>
+      ):<Loading visible={true} />}
     </ContainerTimeTable>
   );
 };

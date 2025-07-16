@@ -43,27 +43,28 @@ import {
   getReportTypes,
   getSemesters,
   getAcademicYears,
+  generateReport,
+  validateReportData,
+  getReportPreview,
+  getWeekStart,
+  getWeekEnd,
+  getMonthStart,
+  getMonthEnd,
 } from "./CreateReportFunction";
 import { Colors } from "../../constant/color";
 import { formatDate, formatMonth } from "../../constant/formatTime";
 const CreateReport = ({ navigation }) => {
   const {
     primary,
-    secondary,
-    tertiary,
     brand,
-    darkLight,
-    background,
-    active,
-    black,
-    backgroundBrand,
+    green,
   } = Colors;
   const [selectedReportType, setSelectedReportType] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-
+  const [academicYears, setAcademicYears] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
@@ -71,12 +72,16 @@ const CreateReport = ({ navigation }) => {
 
   const reportTypes = getReportTypes();
   const semesters = getSemesters();
-  const academicYears = getAcademicYears();
+
+  async function years() {
+    const year = await getAcademicYears();
+    setAcademicYears(year);
+  }
 
   useEffect(() => {
+    years();
+    const currentYear = academicYears.find((s) => s.isCurrent === "Actived");
     const currentSemester = semesters.find((s) => s.isCurrent);
-    const currentYear = academicYears.find((y) => y.isCurrent);
-
     if (currentSemester) {
       setSelectedSemester(currentSemester.name);
     }
@@ -85,13 +90,10 @@ const CreateReport = ({ navigation }) => {
     }
   }, []);
 
-  const handleReportTypeSelect = (type) => {
-    setSelectedReportType(type);
-  };
-
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
     if (date) {
+      console.log(date);
       setSelectedDate(date);
     }
   };
@@ -99,8 +101,14 @@ const CreateReport = ({ navigation }) => {
   const handleMonthChange = (event, date) => {
     setShowMonthPicker(false);
     if (date) {
-      setSelectedMonth(date);
+      const d = new Date(date);
+      d.setDate(1);
+      setSelectedMonth(d);
     }
+  };
+
+  const handleReportTypeSelect = (type) => {
+    setSelectedReportType(type);
   };
 
   const handleSemesterSelect = (semester) => {
@@ -114,42 +122,129 @@ const CreateReport = ({ navigation }) => {
   };
 
   const handleGenerateReport = async () => {
-    try{
-      Alert.alert("Thành công", "Báo cáo đã được tạo thành công");
+    let startTime = null;
+    let endTime = null;
+    let mode = null;
+
+    const reportData = {
+      type: selectedReportType,
+      date: selectedDate,
+      month: selectedMonth,
+      semester: selectedSemester,
+      year: selectedYear,
+    };
+
+    // Check thông tin thời gian tạo báo cáo có tồn tại không
+    const validation = validateReportData(reportData);
+    if (!validation.isValid) {
+      Alert.alert("Lỗi", validation.message);
+    }else{
+      switch (selectedReportType) {
+        //Tạo thời gian theo năm
+        case "Năm":
+          const currentYear = academicYears.find((s) => s.value === selectedYear);
+          if(currentYear){
+            startTime = currentYear.startDate;
+            endTime = currentYear.endDate;
+            mode = selectedReportType;
+          }
+          break;
+        
+        //Tạo thời gian theo học kỳ
+        case "Kì":
+          break;
+        
+        //Tạo thời gian theo tháng
+        case "Tháng":
+          if(selectedMonth){
+            startTime = getMonthStart(selectedMonth);
+            startTime.setUTCHours(0, 0, 0, 0);
+            endTime = getMonthEnd(selectedMonth);
+            mode = selectedReportType;
+          }
+          break;
+        
+        //Tạo thời gian theo tuần
+        case "Tuần":
+          if(selectedDate){
+            startTime = getWeekStart(selectedDate);
+            startTime.setUTCHours(0, 0, 0, 0);
+            endTime = getWeekEnd(selectedDate);
+            endTime.setUTCHours(23, 59, 59, 999);
+            mode = selectedReportType;
+          }
+          break;
+      }      
+    }
+
+    //Tạo báo cáo theo loại
+    try {
+      //Confirm thông tin báo cáo
+      const preview = getReportPreview(reportData);
+      Alert.alert("Xác nhận tạo báo cáo", `Bạn có muốn tạo ${preview}?`, [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Tạo báo cáo",
+          onPress:async() => {
+            try {
+              if(startTime && endTime && mode){
+                const result = await generateReport(
+                  { startTime: startTime, 
+                    endTime: endTime,
+                    mode: mode
+                  })
+                  if(result){
+                    Alert.alert("Thành công", "Báo cáo đã được tạo thành công." + result.termId, [
+                      {
+                        text: "OK",
+                        onPress: () => navigation.goBack(),
+                      },
+                    ]);
+                  }
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      ])  
     } catch (error) {
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo báo cáo");
+      console.log(error);
     }
   };
 
   const renderDatePicker = () => {
-    if (selectedReportType !== "weekly") return null;
+    if (selectedReportType !== "Tuần") return null;
 
     return (
       <DatePickerContainer>
         <DatePickerTitle>Chọn tuần báo cáo</DatePickerTitle>
         <DatePickerButton onPress={() => setShowDatePicker(true)}>
           <DatePickerText>{formatDate(selectedDate)}</DatePickerText>
-          <Ionicons name="calendar-outline" size={24} color="#6D28D9" />
+          <Ionicons name="calendar-outline" size={24} color={brand}/>
         </DatePickerButton>
       </DatePickerContainer>
     );
   };
 
   const renderMonthPicker = () => {
-    if (selectedReportType !== "monthly") return null;
+    if (selectedReportType !== "Tháng") return null;
     return (
       <DatePickerContainer>
         <DatePickerTitle>Chọn tháng báo cáo</DatePickerTitle>
         <DatePickerButton onPress={() => setShowMonthPicker(true)}>
           <DatePickerText>{formatMonth(selectedMonth)}</DatePickerText>
-          <Ionicons name="calendar" size={24} color="#6D28D9" />
+          <Ionicons name="calendar" size={24} color={brand} />
         </DatePickerButton>
       </DatePickerContainer>
     );
   };
 
   const renderSemesterPicker = () => {
-    if (selectedReportType !== "semester") return null;
+    if (selectedReportType !== "Kì") return null;
     return (
       <TimeContainer>
         <TimeTitle>Chọn học kỳ</TimeTitle>
@@ -164,7 +259,7 @@ const CreateReport = ({ navigation }) => {
   };
 
   const renderYearPicker = () => {
-    if (selectedReportType !== "yearly") return null;
+    if (selectedReportType !== "Năm") return null;
     return (
       <TimeContainer>
         <TimeTitle>Chọn năm học</TimeTitle>
@@ -179,18 +274,10 @@ const CreateReport = ({ navigation }) => {
   return (
     <ReportContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ReportHeader>
-        <TouchableOpacity style={{ alignSelf: 'flex-end', marginBottom: 12, padding: 8, backgroundColor: brand, borderRadius: 6 }}
-          onPress={() => navigation.navigate('ReportHistory')}>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Lịch sử báo cáo</Text>
-        </TouchableOpacity>
-          <ReportTitle>Tạo Báo Cáo Tự Động</ReportTitle>
-          <ReportSubtitle>
+        <ReportTypeContainer>
+        <ReportSubtitle>
             Chọn loại báo cáo và thời gian để tạo báo cáo tự động
           </ReportSubtitle>
-        </ReportHeader>
-
-        <ReportTypeContainer>
           <ReportTypeTitle>Loại Báo Cáo</ReportTypeTitle>
           <ReportTypeGrid>
             {reportTypes.map((type) => (
@@ -219,6 +306,9 @@ const CreateReport = ({ navigation }) => {
         {renderYearPicker()}
         <GenerateButton onPress={handleGenerateReport}>
           <GenerateButtonText>Tạo Báo Cáo</GenerateButtonText>
+        </GenerateButton>
+        <GenerateButton onPress={() => navigation.navigate('ReportHistory')} style={{ backgroundColor: green }}>
+          <GenerateButtonText>Lịch sử báo cáo</GenerateButtonText>
         </GenerateButton>
       </ScrollView>
 

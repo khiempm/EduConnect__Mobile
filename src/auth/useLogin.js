@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { fetcher, postData, putData } from "../api/fetcher";
+import { fetcher, fetcherWithParams, postData, putData } from "../api/fetcher";
 import { useState } from "react";
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from "react-native";
@@ -23,7 +23,7 @@ const pushToken = async (userId) => {
 
 const getClassInfo = async (teacherId) => {
   try {
-    const response = await fetcher(`classroom/teacher/${teacherId}`);
+    const response = await fetcherWithParams("Classroom", {teacherId: teacherId});
     if(response){
       const classInfo = response[0].classId;
       await AsyncStorage.setItem("classInfo", classInfo);

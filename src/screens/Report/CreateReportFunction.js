@@ -1,25 +1,13 @@
-// Report generation functions and utilities
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetcher, fetcherWithParams, postData } from "../../api/fetcher";
 import { formatDate, formatMonth } from "../../constant/formatTime";
 
 export const generateReport = async (reportData) => {
   try {
-    // This would be your actual API call to generate the report
-    const response = await fetch('YOUR_API_ENDPOINT/generate-report', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_TOKEN'
-      },
-      body: JSON.stringify(reportData)
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate report');
+    const response = await postData('Term', reportData);
+    if (response) {
+      return response;
     }
-
-    const result = await response.json();
-    return result;
   } catch (error) {
     console.error('Error generating report:', error);
     throw error;
@@ -28,10 +16,10 @@ export const generateReport = async (reportData) => {
 
 export const getReportTypes = () => {
   return [
-    { id: 'weekly', title: 'Theo Tuần', icon: 'calendar-outline', description: 'Báo cáo theo tuần học' },
-    { id: 'monthly', title: 'Theo Tháng', icon: 'calendar', description: 'Báo cáo theo tháng' },
-    { id: 'semester', title: 'Theo Kỳ', icon: 'school-outline', description: 'Báo cáo theo học kỳ' },
-    { id: 'yearly', title: 'Theo Năm', icon: 'calendar-clear-outline', description: 'Báo cáo theo năm học' }
+    { id: 'Tuần', title: 'Theo Tuần', icon: 'calendar-outline', description: 'Báo cáo theo tuần học' },
+    { id: 'Tháng', title: 'Theo Tháng', icon: 'calendar', description: 'Báo cáo theo tháng' },
+    { id: 'Kì', title: 'Theo Kỳ', icon: 'school-outline', description: 'Báo cáo theo học kỳ' },
+    { id: 'Năm', title: 'Theo Năm', icon: 'calendar-clear-outline', description: 'Báo cáo theo năm học' }
   ];
 };
 
@@ -61,49 +49,29 @@ export const getSemesters = () => {
   ];
 };
 
-export const getAcademicYears = () => {
-  return [
-    {
-      value: '2024-2025',
-      label: 'Năm học 2024-2025',
-      isCurrent: true
-    },
-    {
-      value: '2023-2024',
-      label: 'Năm học 2023-2024',
-      isCurrent: false
-    },
-  ];
-};
-
-export const formatReportData = (reportData) => {
-  const { type, date, month, semester, year } = reportData;
-  
-  let formattedData = {
-    reportType: type,
-    generatedAt: new Date().toISOString(),
-    teacherId: 'CURRENT_TEACHER_ID', // This should come from your auth context
-  };
-
-  switch (type) {
-    case 'weekly':
-      formattedData.weekStart = getWeekStart(date);
-      formattedData.weekEnd = getWeekEnd(date);
-      break;
-    case 'monthly':
-      formattedData.month = month.getMonth() + 1;
-      formattedData.year = month.getFullYear();
-      break;
-    case 'semester':
-      formattedData.semester = semester;
-      break;
-    case 'yearly':
-      formattedData.academicYear = year;
-      break;
+export const getAcademicYears =  async() => {
+  try {
+    const classId = await AsyncStorage.getItem('classInfo')
+    const classInfo = await fetcherWithParams("Classroom",{classId: classId})
+    if(classInfo){
+      const schoolYear = await fetcher(`SchoolYear/${classInfo.schoolYearId}`)
+      const startYear = new Date(schoolYear.startDate)
+      const endYear = new Date(schoolYear.endDate)
+      endYear.setUTCHours(23, 59, 59, 999)
+      return [{
+        id: schoolYear.schoolYearId,
+        label: 'Năm học ' + startYear.getFullYear() + '-' + endYear.getFullYear(),
+        isCurrent: schoolYear.status,
+        value: startYear.getFullYear() + '-' + endYear.getFullYear(),
+        startDate: startYear,
+        endDate: endYear
+      }]
+    }
+  } catch (error) {
+    console.log(error)
   }
-
-  return formattedData;
 };
+
 
 export const getWeekStart = (date) => {
   const d = new Date(date);
@@ -119,6 +87,21 @@ export const getWeekEnd = (date) => {
   return weekEnd;
 };
 
+export const getMonthStart = (date) => {
+  const d = new Date(date);
+  d.setDate(1);
+  return d;
+};
+
+export const getMonthEnd = (date) => {
+  const monthStart = getMonthStart(date);
+  const monthEnd = new Date(monthStart);
+  monthEnd.setMonth(monthStart.getMonth() + 1);
+  monthEnd.setDate(monthStart.getDate()-1);
+  monthEnd.setUTCHours(23, 59, 59, 999);
+  return monthEnd;
+};
+
 export const validateReportData = (reportData) => {
   const { type } = reportData;
   
@@ -127,22 +110,22 @@ export const validateReportData = (reportData) => {
   }
 
   switch (type) {
-    case 'weekly':
+    case 'Tuần':
       if (!reportData.date) {
         return { isValid: false, message: 'Vui lòng chọn ngày cho báo cáo tuần' };
       }
       break;
-    case 'monthly':
+    case 'Tháng':
       if (!reportData.month) {
         return { isValid: false, message: 'Vui lòng chọn tháng cho báo cáo' };
       }
       break;
-    case 'semester':
+    case 'Kì':
       if (!reportData.semester) {
         return { isValid: false, message: 'Vui lòng chọn học kỳ' };
       }
       break;
-    case 'yearly':
+    case 'Năm':
       if (!reportData.year) {
         return { isValid: false, message: 'Vui lòng chọn năm học' };
       }
@@ -156,18 +139,18 @@ export const getReportPreview = (reportData) => {
   const { type, date, month, semester, year } = reportData;
   
   switch (type) {
-    case 'weekly':
+    case 'Tuần':
       const weekStart = getWeekStart(date);
       const weekEnd = getWeekEnd(date);
       return `Báo cáo tuần từ ${formatDate(weekStart)} đến ${formatDate(weekEnd)}`;
     
-    case 'monthly':
+    case 'Tháng':
       return `Báo cáo tháng ${formatMonth(month)}`;
     
-    case 'semester':
+    case 'Kì':
       return `Báo cáo ${semester}`;
     
-    case 'yearly':
+    case 'Năm':
       return `Báo cáo ${year}`;
     
     default:

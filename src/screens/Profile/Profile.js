@@ -22,6 +22,7 @@ import { Colors } from "../../constant/color";
 import useProfile from "./useProfile";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loading from "../../components/Loading";
 const { darkLight, primary } = Colors;
 
 const Profile = () => {
@@ -59,7 +60,7 @@ const Profile = () => {
           <MaterialIcons name="logout" size={40} color={primary} />
         </TouchableOpacity>
       </Header>
-
+      {classes.length === 0 ? <Loading visible={true} /> : (
       <ProfileContainer>
         <ProfileHeader>
           <ProfileTitle>Thông tin cá nhân</ProfileTitle>
@@ -96,6 +97,7 @@ const Profile = () => {
           ))}
         </ProfileContent>
       </ProfileContainer>
+      )}
     </ContainerProfile>
   );
 };
