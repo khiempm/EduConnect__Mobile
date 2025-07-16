@@ -44,6 +44,12 @@ import {
   getSemesters,
   getAcademicYears,
   generateReport,
+  validateReportData,
+  getReportPreview,
+  getWeekStart,
+  getWeekEnd,
+  getMonthStart,
+  getMonthEnd,
 } from "./CreateReportFunction";
 import { Colors } from "../../constant/color";
 import { formatDate, formatMonth } from "../../constant/formatTime";
@@ -75,8 +81,6 @@ const CreateReport = ({ navigation }) => {
 
   async function years() {
     const year = await getAcademicYears();
-    console.log(year);
-    
     setAcademicYears(year);
   }
 
@@ -95,6 +99,7 @@ const CreateReport = ({ navigation }) => {
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
     if (date) {
+      console.log(date);
       setSelectedDate(date);
     }
   };
@@ -102,7 +107,9 @@ const CreateReport = ({ navigation }) => {
   const handleMonthChange = (event, date) => {
     setShowMonthPicker(false);
     if (date) {
-      setSelectedMonth(date);
+      const d = new Date(date);
+      d.setDate(1);
+      setSelectedMonth(d);
     }
   };
 
@@ -121,23 +128,99 @@ const CreateReport = ({ navigation }) => {
   };
 
   const handleGenerateReport = async () => {
-    if(selectedReportType === "Năm"){
-      const currentYear = academicYears.find((s) => s.value === selectedYear);
-      if(currentYear){
-        const result = generateReport(
-          { startDate: currentYear.startDate, 
-            endDate: currentYear.endDate,
-            mode: selectedReportType
-          })
-        console.log(result);
-      }
-    try{
-      Alert.alert("Thành công", "Báo cáo đã được tạo thành công");
+    let startTime = null;
+    let endTime = null;
+    let mode = null;
+
+    const reportData = {
+      type: selectedReportType,
+      date: selectedDate,
+      month: selectedMonth,
+      semester: selectedSemester,
+      year: selectedYear,
+    };
+
+    // Check thông tin thời gian tạo báo cáo có tồn tại không
+    const validation = validateReportData(reportData);
+    if (!validation.isValid) {
+      Alert.alert("Lỗi", validation.message);
+    }else{
+      switch (selectedReportType) {
+        //Tạo thời gian theo năm
+        case "Năm":
+          const currentYear = academicYears.find((s) => s.value === selectedYear);
+          if(currentYear){
+            startTime = currentYear.startDate;
+            endTime = currentYear.endDate;
+            mode = selectedReportType;
+          }
+          break;
+        
+        //Tạo thời gian theo học kỳ
+        case "Kì":
+          break;
+        
+        //Tạo thời gian theo tháng
+        case "Tháng":
+          if(selectedMonth){
+            startTime = getMonthStart(selectedMonth);
+            startTime.setUTCHours(0, 0, 0, 0);
+            endTime = getMonthEnd(selectedMonth);
+            mode = selectedReportType;
+          }
+          break;
+        
+        //Tạo thời gian theo tuần
+        case "Tuần":
+          if(selectedDate){
+            startTime = getWeekStart(selectedDate);
+            startTime.setUTCHours(0, 0, 0, 0);
+            endTime = getWeekEnd(selectedDate);
+            endTime.setUTCHours(23, 59, 59, 999);
+            mode = selectedReportType;
+          }
+          break;
+      }      
+    }
+
+    //Tạo báo cáo theo loại
+    try {
+      //Confirm thông tin báo cáo
+      const preview = getReportPreview(reportData);
+      Alert.alert("Xác nhận tạo báo cáo", `Bạn có muốn tạo ${preview}?`, [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Tạo báo cáo",
+          onPress:async() => {
+            try {
+              if(startTime && endTime && mode){
+                const result = await generateReport(
+                  { startTime: startTime, 
+                    endTime: endTime,
+                    mode: mode
+                  })
+                  if(result){
+                    Alert.alert("Thành công", "Báo cáo đã được tạo thành công." + result.termId, [
+                      {
+                        text: "OK",
+                        onPress: () => navigation.goBack(),
+                      },
+                    ]);
+                  }
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      ])  
     } catch (error) {
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo báo cáo");
+      console.log(error);
     }
   };
-};
 
   const renderDatePicker = () => {
     if (selectedReportType !== "Tuần") return null;
