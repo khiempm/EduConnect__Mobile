@@ -43,6 +43,7 @@ import {
   getReportTypes,
   getSemesters,
   getAcademicYears,
+  generateReport,
 } from "./CreateReportFunction";
 import { Colors } from "../../constant/color";
 import { formatDate, formatMonth } from "../../constant/formatTime";
@@ -63,7 +64,7 @@ const CreateReport = ({ navigation }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-
+  const [academicYears, setAcademicYears] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
@@ -71,12 +72,18 @@ const CreateReport = ({ navigation }) => {
 
   const reportTypes = getReportTypes();
   const semesters = getSemesters();
-  const academicYears = getAcademicYears();
+
+  async function years() {
+    const year = await getAcademicYears();
+    console.log(year);
+    
+    setAcademicYears(year);
+  }
 
   useEffect(() => {
+    years();
+    const currentYear = academicYears.find((s) => s.isCurrent === "Actived");
     const currentSemester = semesters.find((s) => s.isCurrent);
-    const currentYear = academicYears.find((y) => y.isCurrent);
-
     if (currentSemester) {
       setSelectedSemester(currentSemester.name);
     }
@@ -84,10 +91,6 @@ const CreateReport = ({ navigation }) => {
       setSelectedYear(currentYear.value);
     }
   }, []);
-
-  const handleReportTypeSelect = (type) => {
-    setSelectedReportType(type);
-  };
 
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
@@ -103,6 +106,10 @@ const CreateReport = ({ navigation }) => {
     }
   };
 
+  const handleReportTypeSelect = (type) => {
+    setSelectedReportType(type);
+  };
+
   const handleSemesterSelect = (semester) => {
     setSelectedSemester(semester);
     setShowSemesterPicker(false);
@@ -114,15 +121,26 @@ const CreateReport = ({ navigation }) => {
   };
 
   const handleGenerateReport = async () => {
+    if(selectedReportType === "Năm"){
+      const currentYear = academicYears.find((s) => s.value === selectedYear);
+      if(currentYear){
+        const result = generateReport(
+          { startDate: currentYear.startDate, 
+            endDate: currentYear.endDate,
+            mode: selectedReportType
+          })
+        console.log(result);
+      }
     try{
       Alert.alert("Thành công", "Báo cáo đã được tạo thành công");
     } catch (error) {
       Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo báo cáo");
     }
   };
+};
 
   const renderDatePicker = () => {
-    if (selectedReportType !== "weekly") return null;
+    if (selectedReportType !== "Tuần") return null;
 
     return (
       <DatePickerContainer>
@@ -136,7 +154,7 @@ const CreateReport = ({ navigation }) => {
   };
 
   const renderMonthPicker = () => {
-    if (selectedReportType !== "monthly") return null;
+    if (selectedReportType !== "Tháng") return null;
     return (
       <DatePickerContainer>
         <DatePickerTitle>Chọn tháng báo cáo</DatePickerTitle>
@@ -149,7 +167,7 @@ const CreateReport = ({ navigation }) => {
   };
 
   const renderSemesterPicker = () => {
-    if (selectedReportType !== "semester") return null;
+    if (selectedReportType !== "Kì") return null;
     return (
       <TimeContainer>
         <TimeTitle>Chọn học kỳ</TimeTitle>
@@ -164,7 +182,7 @@ const CreateReport = ({ navigation }) => {
   };
 
   const renderYearPicker = () => {
-    if (selectedReportType !== "yearly") return null;
+    if (selectedReportType !== "Năm") return null;
     return (
       <TimeContainer>
         <TimeTitle>Chọn năm học</TimeTitle>

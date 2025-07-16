@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { fetcher } from "../../api/fetcher";
+import { fetcher, fetcherWithParams } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compareDate, formatTime, getPresentCourse, sortByStartTimeDesc } from "../../constant/formatTime";
 
@@ -82,7 +82,7 @@ export const getCourses = async () => {
 
 export const getClassName = async () => {
   const classId = await AsyncStorage.getItem('classInfo');
-  const response = await fetcher(`Classroom/${classId}`);
+  const response = await fetcherWithParams("Classroom",{classId: classId});
   if(response){
     return response.className;
   }
