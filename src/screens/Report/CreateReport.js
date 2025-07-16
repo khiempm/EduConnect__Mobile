@@ -56,14 +56,8 @@ import { formatDate, formatMonth } from "../../constant/formatTime";
 const CreateReport = ({ navigation }) => {
   const {
     primary,
-    secondary,
-    tertiary,
     brand,
-    darkLight,
-    background,
-    active,
-    black,
-    backgroundBrand,
+    green,
   } = Colors;
   const [selectedReportType, setSelectedReportType] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -230,7 +224,7 @@ const CreateReport = ({ navigation }) => {
         <DatePickerTitle>Chọn tuần báo cáo</DatePickerTitle>
         <DatePickerButton onPress={() => setShowDatePicker(true)}>
           <DatePickerText>{formatDate(selectedDate)}</DatePickerText>
-          <Ionicons name="calendar-outline" size={24} color="#6D28D9" />
+          <Ionicons name="calendar-outline" size={24} color={brand}/>
         </DatePickerButton>
       </DatePickerContainer>
     );
@@ -243,7 +237,7 @@ const CreateReport = ({ navigation }) => {
         <DatePickerTitle>Chọn tháng báo cáo</DatePickerTitle>
         <DatePickerButton onPress={() => setShowMonthPicker(true)}>
           <DatePickerText>{formatMonth(selectedMonth)}</DatePickerText>
-          <Ionicons name="calendar" size={24} color="#6D28D9" />
+          <Ionicons name="calendar" size={24} color={brand} />
         </DatePickerButton>
       </DatePickerContainer>
     );
@@ -280,18 +274,10 @@ const CreateReport = ({ navigation }) => {
   return (
     <ReportContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ReportHeader>
-        <TouchableOpacity style={{ alignSelf: 'flex-end', marginBottom: 12, padding: 8, backgroundColor: brand, borderRadius: 6 }}
-          onPress={() => navigation.navigate('ReportHistory')}>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Lịch sử báo cáo</Text>
-        </TouchableOpacity>
-          <ReportTitle>Tạo Báo Cáo Tự Động</ReportTitle>
-          <ReportSubtitle>
+        <ReportTypeContainer>
+        <ReportSubtitle>
             Chọn loại báo cáo và thời gian để tạo báo cáo tự động
           </ReportSubtitle>
-        </ReportHeader>
-
-        <ReportTypeContainer>
           <ReportTypeTitle>Loại Báo Cáo</ReportTypeTitle>
           <ReportTypeGrid>
             {reportTypes.map((type) => (
@@ -320,6 +306,9 @@ const CreateReport = ({ navigation }) => {
         {renderYearPicker()}
         <GenerateButton onPress={handleGenerateReport}>
           <GenerateButtonText>Tạo Báo Cáo</GenerateButtonText>
+        </GenerateButton>
+        <GenerateButton onPress={() => navigation.navigate('ReportHistory')} style={{ backgroundColor: green }}>
+          <GenerateButtonText>Lịch sử báo cáo</GenerateButtonText>
         </GenerateButton>
       </ScrollView>
 

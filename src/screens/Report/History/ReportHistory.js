@@ -6,6 +6,7 @@ import Constants from "expo-constants";
 import {HeaderTitle, BackButton } from "../../../constant/styleAttendanceList";
 import { Colors } from "../../../constant/color";
 import { useReportHistory } from "./useReportHistory";
+import { formatDate } from "../../../constant/formatTime";
 const { brand } = Colors;
 
 const StatusBarHeight = Constants.statusBarHeight;
@@ -29,6 +30,7 @@ const ReportHistory = () => {
           <Text style={styles.title}>{report.title}</Text>
           <Text style={styles.info}>Lớp: {report.className}</Text>
           <Text style={styles.info}>Giáo viên chủ nhiệm: {report.teacherName}</Text>
+          <Text style={styles.info}>Ngày tạo: {formatDate(report.createdAt)}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
