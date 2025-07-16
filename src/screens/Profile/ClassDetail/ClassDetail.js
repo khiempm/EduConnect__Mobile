@@ -20,6 +20,7 @@ import {
 } from "../../../constant/styleAttendanceList";
 import { Colors } from "../../../constant/color";
 import { formatDate } from "../../../constant/formatTime";
+import Loading from "../../../components/Loading";
 const {primary, active, darkLight} = Colors;
 const ClassDetail = ({route}) => {
   const navigation = useNavigation();
@@ -71,16 +72,18 @@ const ClassDetail = ({route}) => {
         </LessonRow>
       </LessonInfo>
       </HeaderContainer>
+      {students.length === 0 ? <Loading visible={true} /> : (
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <StudentList>
-          {students.map((student) => (
-            <StudentCard style={{flexDirection: "column", alignItems: "flex-start"}} key={student.id}>
+          {students.map((student, index) => (
+            <StudentCard style={{flexDirection: "column", alignItems: "flex-start"}} key={index}>
               <StudentName>{student.fullName}</StudentName>
               <StudentName style={{fontSize: 12, color: darkLight}}>Ngày sinh: {formatDate(student.dateOfBirth)}</StudentName>
             </StudentCard>
           ))}
         </StudentList>
       </ScrollView>
+      )}
     </ContainerAttendance>
   )
 }

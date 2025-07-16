@@ -30,6 +30,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { fetcher } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compareDate, formatDate, formatTime, sortByStartTimeAsc } from "../../constant/formatTime";
+import Loading from "../../components/Loading";
 
 //chuyển đổi định dạng
 function mapCourseToSchedule(course) {
@@ -133,6 +134,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
       </Header>
 
       {/* Schedule List */}
+      {schedules.length > 0 ? (
       <ScheduleList>
         <ScrollView style={{ width: "100%" }}>
           { filteredSchedules.map((item, idx) => (
@@ -181,6 +183,7 @@ const TimeTable = ({ date, setShow, weekDays, setDate }) => {
             ))}
         </ScrollView>
       </ScheduleList>
+      ):<Loading visible={true} />}
     </ContainerTimeTable>
   );
 };
