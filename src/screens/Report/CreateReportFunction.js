@@ -24,29 +24,34 @@ export const getReportTypes = () => {
 };
 
 // Hardcoded data - replace with your API calls later
-export const getSemesters = () => {
-  return [
-    { 
-      id: '1', 
-      name: 'Học kỳ 1 - Năm học 2024-2025', 
-      isCurrent: true
-    },
-    { 
-      id: '2', 
-      name: 'Học kỳ 2 - Năm học 2024-2025', 
-      isCurrent: false
-    },
-    { 
-      id: '3', 
-      name: 'Học kỳ 1 - Năm học 2023-2024', 
-      isCurrent: false
-    },
-    { 
-      id: '4', 
-      name: 'Học kỳ 2 - Năm học 2023-2024', 
-      isCurrent: false
-    },
-  ];
+export const getSemesters = async () => {
+  try {
+    const academicYear = await getAcademicYears();
+    const startYear = new Date(academicYear[0].startDate)
+    const endYear = new Date(academicYear[0].endDate)
+    const academicYearName = 'Năm học ' + startYear.getFullYear() + '-' + endYear.getFullYear();
+    const classId = await AsyncStorage.getItem('classInfo')
+    const classInfo = await fetcherWithParams("Classroom",{classId: classId})
+    if(classInfo){
+      const semesters = await fetcherWithParams("Semester",{schoolYearId: classInfo.schoolYearId})
+      if(semesters){
+        const semestersData = semesters.map((semester) => {
+          const startSemester = new Date(semester.startDate)
+          const endSemester = new Date(semester.endDate)
+          endSemester.setUTCHours(23, 59, 59, 999)
+          return {
+            name: semester.semesterName + ' - ' + academicYearName,
+            isCurrent: semester.status,
+            startDate: startSemester,
+            endDate: endSemester
+          }
+        })
+        return semestersData;
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export const getAcademicYears =  async() => {

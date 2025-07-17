@@ -166,7 +166,7 @@ export const GenerateButton = styled.TouchableOpacity`
   padding: 18px;
   border-radius: 12px;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   shadow-color: #000;
   shadow-offset: 0px 2px;
   shadow-opacity: 0.2;

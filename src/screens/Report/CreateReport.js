@@ -64,24 +64,29 @@ const CreateReport = ({ navigation }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [academicYears, setAcademicYears] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [showSemesterPicker, setShowSemesterPicker] = useState(false);
-
+  
   const reportTypes = getReportTypes();
-  const semesters = getSemesters();
+  const [academicYears, setAcademicYears] = useState([]);
+  const [semesters, setSemesters] = useState([]);
 
   async function years() {
     const year = await getAcademicYears();
     setAcademicYears(year);
   }
+  async function semester() {
+    const semester = await getSemesters();
+    setSemesters(semester);
+  }
 
   useEffect(() => {
     years();
+    semester();
     const currentYear = academicYears.find((s) => s.isCurrent === "Actived");
-    const currentSemester = semesters.find((s) => s.isCurrent);
+    const currentSemester = semesters.find((s) => s.isCurrent === "Actived");
     if (currentSemester) {
       setSelectedSemester(currentSemester.name);
     }
@@ -152,8 +157,14 @@ const CreateReport = ({ navigation }) => {
         
         //Tạo thời gian theo học kỳ
         case "Kì":
+          const currentSemester = semesters.find((s) => s.name === selectedSemester);
+          if(currentSemester){
+            startTime = currentSemester.startDate;
+            endTime = currentSemester.endDate;
+            mode = selectedReportType;
+          }
           break;
-        
+
         //Tạo thời gian theo tháng
         case "Tháng":
           if(selectedMonth){
@@ -200,7 +211,7 @@ const CreateReport = ({ navigation }) => {
                     Alert.alert("Thành công", "Báo cáo đã được tạo thành công." + result.termId, [
                       {
                         text: "OK",
-                        onPress: () => navigation.goBack(),
+                        onPress: () => navigation.navigate('ReportHistory'),
                       },
                     ]);
                   }
@@ -339,10 +350,10 @@ const CreateReport = ({ navigation }) => {
           <ModalContent>
             <ModalTitle>Chọn Học Kỳ</ModalTitle>
             <ScrollView>
-              {semesters.map((semester) => (
-              <ModalItem key={semester.id} onPress={() => handleSemesterSelect(semester.name)}>
+              {semesters.map((semester,index) => (
+              <ModalItem key={index} onPress={() => handleSemesterSelect(semester.name)}>
                 <ModalItemText>{semester.name}</ModalItemText>
-                {semester.isCurrent && (
+                {semester.isCurrent === "Actived" && (
                 <ModalItemSubText>(Kỳ hiện tại)</ModalItemSubText>
                 )}
               </ModalItem>
