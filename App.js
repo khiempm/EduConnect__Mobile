@@ -11,11 +11,12 @@ LogBox.ignoreLogs(['This method is deprecated']);
 import Login from './src/screens/Login';
 import SignUp from './src/screens/SignUp';
 import FooterMenu from './src/components/FooterMenu';
-import Attendance from './src/screens/TimeTable/Attendance/Attendance';
-import AttendanceDetail from './src/screens/TimeTable/Attendance/AttendanceDetail/AttendanceDetail';
-import ReportHistory from './src/screens/Report/History/ReportHistory';
-import ReportDetail from './src/screens/Report/History/ReportDetail/ReportDetail';
-import ClassDetail from './src/screens/Profile/ClassDetail/ClassDetail';
+import Attendance from './src/screens/Attendance/Attendance';
+import AttendanceDetail from './src/screens/AttendanceDetail/AttendanceDetail';
+import ReportHistory from './src/screens/History/ReportHistory';
+import ReportDetail from './src/screens/ReportDetail/ReportDetail';
+import ClassDetail from './src/screens/ClassDetail/ClassDetail';
+import Profile from './src/screens/Profile/Profile';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,7 @@ export default function App() {
         <Stack.Screen name="ReportHistory" component={ReportHistory} />
         <Stack.Screen name="ReportDetail" component={ReportDetail} />
         <Stack.Screen name="ClassDetail" component={ClassDetail} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

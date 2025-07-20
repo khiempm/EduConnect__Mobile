@@ -1,31 +1,20 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import {
   ContainerNote,
   Header,
   HeaderTitle,
   Title,
-  Subtitle,
   SectionTitle,
   Tag,
-  TagSelected,
   SubmitButton,
   SubmitButtonText,
-  Star,
   TagText,
   TagContainer,
   Textarea,
-} from "../../../../constant/styleNote";
-import { Colors } from "../../../../constant/color";
+} from "../../constant/styleNote";
+import { Colors } from "../../constant/color";
 
 const { primary, brand, black } = Colors;
 

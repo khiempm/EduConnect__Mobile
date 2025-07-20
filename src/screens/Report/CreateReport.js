@@ -3,8 +3,6 @@ import {
   ScrollView,
   Alert,
   Modal,
-  TouchableOpacity,
-  Text,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,7 +27,6 @@ import {
   TimeText,
   GenerateButton,
   GenerateButtonText,
-  InfoText,
   ModalContainer,
   ModalContent,
   ModalTitle,

@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 import { fetcher, fetcherWithParams } from "../../api/fetcher";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { compareDate, formatTime, getPresentCourse, sortByStartTimeDesc } from "../../constant/formatTime";
+import { compareDate, formatTime, sortByStartTimeAsc, sortByStartTimeDesc } from "../../constant/formatTime";
 
 function mapCourseToSchedule(course) {
   return {
@@ -13,6 +13,10 @@ function mapCourseToSchedule(course) {
     rawStartTime: course.startTime,
     courseId: course.courseId,
   };
+}
+
+const getPresentCourse = (schedule) => {
+  return schedule.filter(item => item.status === "present");
 }
 
 export const getTodayDate = () => {
@@ -40,6 +44,16 @@ export const handleNotificationPress = (notification) => {
   );
 };
 
+export const handleTodayCourse = (notification) => {
+  Alert.alert(
+    "Tiết học hôm nay",
+    `${notification.length > 0 ? notification.map(item => 
+      `${item.subject}: ${item.startTime} - ${item.endTime} ` + `(${item.status === "present" ? "Đã điểm danh" : "Chưa điểm danh"})`
+    ).join("\n") : "Hôm nay không có tiết học"}`,
+    [{ text: "Đóng", style: "default" }]
+  );
+};
+
 export const getPriorityColor = (priority) => {
     switch(priority) {
       case 'Vắng mặt': return '#FF6B6B';
@@ -61,16 +75,18 @@ export const getCourses = async () => {
     const classId = await AsyncStorage.getItem('classInfo');
     const response = await fetcher(`Course/class/${classId}`);
     if(response){
-      const mapped = response.map(mapCourseToSchedule);
       const today = new Date();
+      const mapped = response.map(mapCourseToSchedule);
       const presentCourses = getPresentCourse(mapped);
-      const todayCourses = compareDate(presentCourses, today);
-      const sortedCourses = sortByStartTimeDesc(todayCourses);
+      const todayCourses = sortByStartTimeAsc(compareDate(mapped, today));
+      const todayPresentCourses = compareDate(presentCourses, today);
+      const sortedCourses = sortByStartTimeDesc(todayPresentCourses);
       const unPresentStudent = await getAttendance(sortedCourses);
       const student = await getStudent(unPresentStudent);
       return {
         listCourse: sortedCourses,
         numberOfCourse: compareDate(mapped, today).length,
+        todayCourse: todayCourses,
         listUnPresentStudent: student,
         classId: classId
       }; 

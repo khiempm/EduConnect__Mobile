@@ -10,6 +10,7 @@ import {
   getClassName,
   getNumberOfStudent,
   getTodayStudent,
+  handleTodayCourse,
 } from "./DashBoardFunction";
 import {
   ContainerDashBoard,
@@ -36,8 +37,9 @@ import {
   StatusText,
   NotificationDetails
 } from "../../constant/styleDashBoard";
-import { Text } from 'react-native';
+import { useReportHistory } from '../History/useReportHistory';
 import Loading from '../../components/Loading';
+import { useNavigation } from '@react-navigation/native';
 
 
 // interface student [{ 
@@ -56,23 +58,26 @@ import Loading from '../../components/Loading';
 
 
 const Dashboard = () => {
-  // Dữ liệu mẫu về tiết học của học sinh trong ngày
+  const navigation = useNavigation();
   const [numberOfTodayCourse, setNumberOfTodayCourse] = useState(0);
   const [student, setStudent] = useState([]);
   const [className, setClassName] = useState('');
   const [numberPresent, setNumberPresent] = useState("0");
   const [numberStudent, setNumberStudent] = useState("");
+  const [todayCourse, setTodayCourse] = useState([]);
+  const { listReports } = useReportHistory();
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
         const course = await getCourses();
-        const {listCourse, numberOfCourse, listUnPresentStudent} = course;
+        const {listCourse, numberOfCourse, listUnPresentStudent, todayCourse} = course;
         const className = await getClassName();
         const numberOfStudent = await getNumberOfStudent();
         setNumberStudent(numberOfStudent);
         setStudent(listUnPresentStudent);
         setNumberOfTodayCourse(numberOfCourse);
         setClassName(className);
+        setTodayCourse(todayCourse);
         const numberOfPresentStudent = await getTodayStudent(listCourse[0].courseId);
         setNumberPresent(numberOfPresentStudent)
       };
@@ -93,19 +98,19 @@ const Dashboard = () => {
       {/* Summary Cards */}
       {numberStudent.length === 0 ? <Loading visible={true} /> : (
       <SummaryContainer style={{ shadowOffset: { width: 0, height: 2 } }}>
-        <SummaryCard>
+        <SummaryCard onPress={() => navigation.navigate('Profile')}>
           <MaterialIcons name="people" size={24} color="#FF6B6B" />
           <SummaryNumber>{numberPresent}/{numberStudent}</SummaryNumber>
           <SummaryLabel>Học sinh</SummaryLabel>
         </SummaryCard>
-        <SummaryCard>
+        <SummaryCard onPress={() => handleTodayCourse(todayCourse)}>
           <MaterialIcons name="class" size={24} color="#FFA726" />
           <SummaryNumber>{numberOfTodayCourse}</SummaryNumber>
           <SummaryLabel>Tiết học hôm nay</SummaryLabel>
         </SummaryCard>
-        <SummaryCard>
+        <SummaryCard onPress={() => navigation.navigate('ReportHistory')}>
           <MaterialIcons name="analytics" size={24} color="#66BB6A" />
-          <SummaryNumber>2</SummaryNumber>
+          <SummaryNumber>{listReports.length}</SummaryNumber>
           <SummaryLabel>Báo cáo</SummaryLabel>
         </SummaryCard>
       </SummaryContainer>

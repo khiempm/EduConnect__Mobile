@@ -81,7 +81,6 @@ export const SubmitButton = styled.TouchableOpacity`
   border-radius: 16px;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
 `;
 
 export const SubmitButtonText = styled.Text`
@@ -97,7 +96,6 @@ export const Textarea = styled.TextInput`
   padding: 16px;
   min-height: 300px;
   font-size: 16px;
-  margin-bottom: 24px;
   margin-top: 8px;
   color: ${black};
   background-color: ${backgroundBrand};

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import {HeaderTitle, BackButton } from "../../../../constant/styleAttendanceList";
-import { Colors } from "../../../../constant/color";
+import {HeaderTitle, BackButton } from "../../constant/styleAttendanceList";
+import { Colors } from "../../constant/color";
 import { useReportDetail } from "./useReportDetail";
-import { formatDate } from "../../../../constant/formatTime";
+import { formatDate } from "../../constant/formatTime";
 
 
 const StatusBarHeight = Constants.statusBarHeight;

@@ -13,16 +13,12 @@ import {
   StyledTextInput,
   ButtonText,
   MsgBox,
-  Line, 
-  ExtraView,
-  ExtraText,
-  TextLink,
-  TextLinkContent,
+  Line,
 } from "../constant/style";
 import { assets } from "./../../assets/assets";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import { View, TouchableOpacity, Text} from "react-native";
 import { Fontisto, Ionicons, Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "../constant/color"; 
@@ -36,7 +32,7 @@ const Login = () => {
   const { handleLogin, errorMessage } = useLogin();
   const [loading, setLoading] = useState(false);
   return (
-    <StyledContainer>
+    <StyledContainer style={{paddingTop: 70}}>
       <StatusBar style="dark" />
       <InnerContainer>
         <PageLogo resizeMode="cover" source={assets.chatbot} />
@@ -80,14 +76,14 @@ const Login = () => {
                     setHidePassword={setHidePassword}
                 />
                 {errorMessage ? <Text style={{color: "red"}}>Tài khoản hoặc mật khẩu không chính xác</Text> : <MsgBox>...</MsgBox>}
+                <Line />
                 <StyledButton onPress={handleSubmit}>
                   <ButtonText>Đăng Nhập</ButtonText>
                 </StyledButton>
-                <Line />
-                <StyledButton google={true} onPress={handleSubmit}>
+                {/* <StyledButton google={true} onPress={handleSubmit}>
                   <Fontisto name="google" size={25} color={primary} />
                   <ButtonText google={true}>Đăng Nhập Với Google</ButtonText>
-                </StyledButton>
+                </StyledButton> */}
             </StyledFormArea>
           )}
         </Formik>

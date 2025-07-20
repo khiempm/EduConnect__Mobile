@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { postData, fetcher, deleteData, putData } from "../../../api/fetcher";
+import { useEffect, useState } from "react";
+import { postData, fetcher, deleteData, putData } from "../../api/fetcher";
 
 export const useAttendance = (route, navigation) => {
   const {courseId, courseName, courseTime, courseEndTime, courseRoom, classId} = route.params;

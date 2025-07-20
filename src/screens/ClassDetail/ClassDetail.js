@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetcher } from "../../../api/fetcher";
+import { fetcher } from "../../api/fetcher";
 import {
   ContainerAttendance,
   HeaderContainer,
@@ -17,10 +16,11 @@ import {
   StudentList,
   StudentCard,
   StudentName,
-} from "../../../constant/styleAttendanceList";
-import { Colors } from "../../../constant/color";
-import { formatDate } from "../../../constant/formatTime";
-import Loading from "../../../components/Loading";
+} from "../../constant/styleAttendanceList";
+import { useNavigation } from "@react-navigation/native";
+import { Colors } from "../../constant/color";
+import { formatDate } from "../../constant/formatTime";
+import Loading from "../../components/Loading";
 const {primary, active, darkLight} = Colors;
 const ClassDetail = ({route}) => {
   const navigation = useNavigation();

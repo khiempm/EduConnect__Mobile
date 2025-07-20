@@ -35,10 +35,6 @@ export const formatTime = (isoString) => {
     return `${hours}:${minutes} ${time}`;
   };
 
-export const getPresentCourse = (schedule) => {
-    return schedule.filter(item => item.status === "present");
-}
-
 export const sortByStartTimeDesc = (schedule) => {
     return schedule.sort((a, b) => {
         const dateA = new Date(a.rawStartTime);

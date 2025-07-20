@@ -3,10 +3,10 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
-import {HeaderTitle, BackButton } from "../../../constant/styleAttendanceList";
-import { Colors } from "../../../constant/color";
+import {HeaderTitle, BackButton } from "../../constant/styleAttendanceList";
+import { Colors } from "../../constant/color";
 import { useReportHistory } from "./useReportHistory";
-import { formatDate } from "../../../constant/formatTime";
+import { formatDate } from "../../constant/formatTime";
 const { brand } = Colors;
 
 const StatusBarHeight = Constants.statusBarHeight;
