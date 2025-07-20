@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetcher, fetcherWithParams } from "../../../api/fetcher";
+import { fetcher, fetcherWithParams } from "../../api/fetcher";
 import { useState } from "react";
 
 export const useReportHistory = () => {

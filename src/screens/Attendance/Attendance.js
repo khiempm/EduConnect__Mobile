@@ -1,6 +1,6 @@
 import React from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { StyledButton, ButtonText } from "../../../constant/style";
+import { ScrollView } from "react-native";
+import { ButtonText } from "../../constant/style";
 import { Ionicons } from "@expo/vector-icons";
 import {
   ContainerAttendance,
@@ -8,7 +8,6 @@ import {
   HeaderRow,
   BackButton,
   HeaderTitle,
-  HeaderIcon,
   LessonInfo,
   LessonRow,
   LessonIcon,
@@ -22,11 +21,10 @@ import {
   CancelButton,
   CancelButtonText,
   StudentName,
-} from "../../../constant/styleAttendanceList";
-import { Colors } from "../../../constant/color";
-import { useNavigation } from "@react-navigation/native";
+} from "../../constant/styleAttendanceList";
+import { Colors } from "../../constant/color";
 import { useAttendance } from "./AttendanceFunction";
-import Loading from "../../../components/Loading";
+import Loading from "../../components/Loading";
 
 const {primary, active} = Colors;
 

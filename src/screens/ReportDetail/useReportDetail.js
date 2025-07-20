@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetcher } from "../../../../api/fetcher";
+import { fetcher } from "../../api/fetcher";
 
 export const useReportDetail = () => {
     const [timeDetail, setTimeDetail] = useState(null);
