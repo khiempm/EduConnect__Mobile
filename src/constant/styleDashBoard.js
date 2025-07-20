@@ -48,7 +48,7 @@ export const SummaryContainer = styled.View`
     shadow-radius: 4px;
 `;
 
-export const SummaryCard = styled.View`
+export const SummaryCard = styled.TouchableOpacity`
     flex: 1;
     align-items: center;
 `;

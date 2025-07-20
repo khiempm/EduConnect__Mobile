@@ -16,6 +16,7 @@ import AttendanceDetail from './src/screens/AttendanceDetail/AttendanceDetail';
 import ReportHistory from './src/screens/History/ReportHistory';
 import ReportDetail from './src/screens/ReportDetail/ReportDetail';
 import ClassDetail from './src/screens/ClassDetail/ClassDetail';
+import Profile from './src/screens/Profile/Profile';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,7 @@ export default function App() {
         <Stack.Screen name="ReportHistory" component={ReportHistory} />
         <Stack.Screen name="ReportDetail" component={ReportDetail} />
         <Stack.Screen name="ClassDetail" component={ClassDetail} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
