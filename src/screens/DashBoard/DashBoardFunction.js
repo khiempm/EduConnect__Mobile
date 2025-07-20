@@ -47,12 +47,11 @@ export const handleNotificationPress = (notification) => {
 export const handleTodayCourse = (notification) => {
   Alert.alert(
     "Tiết học hôm nay",
-    `${notification.map(item => 
+    `${notification.length > 0 ? notification.map(item => 
       `${item.subject}: ${item.startTime} - ${item.endTime} ` + `(${item.status === "present" ? "Đã điểm danh" : "Chưa điểm danh"})`
-    ).join("\n")}`,
+    ).join("\n") : "Hôm nay không có tiết học"}`,
     [{ text: "Đóng", style: "default" }]
   );
-  console.log(notification);
 };
 
 export const getPriorityColor = (priority) => {
