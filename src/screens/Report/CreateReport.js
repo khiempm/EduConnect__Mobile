@@ -95,7 +95,6 @@ const CreateReport = ({ navigation }) => {
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
     if (date) {
-      console.log(date);
       setSelectedDate(date);
     }
   };

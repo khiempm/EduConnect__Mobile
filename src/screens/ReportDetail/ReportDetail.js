@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Constants from "expo-constants";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {HeaderTitle, BackButton } from "../../constant/styleAttendanceList";
 import { Colors } from "../../constant/color";
@@ -9,7 +8,6 @@ import { useReportDetail } from "./useReportDetail";
 import { formatDate } from "../../constant/formatTime";
 import Loading from "../../components/Loading";
 import { StyledButton,ButtonText} from "../../constant/style";
-import useProfile from "../Profile/useProfile";
 
 
 const StatusBarHeight = Constants.statusBarHeight;
@@ -19,7 +17,7 @@ const ReportDetail = ({ route }) => {
   useEffect(() => {
     getReportTerm(report);
   }, [route]);
-  const { timeDetail, loading, error, getReportTerm } = useReportDetail();
+  const { timeDetail, loading, error, getReportTerm, sendReport } = useReportDetail();
   const { report } = route.params;
   const navigation = useNavigation();
   return (
@@ -71,10 +69,11 @@ const ReportDetail = ({ route }) => {
         <Text style={styles.description}>{report.description}</Text>
       </ScrollView>
       <View style={{flexDirection: 'row', justifyContent: 'space-around',width: '100%', marginTop: 15}}>
-        <StyledButton style={{width: '45%', backgroundColor: green}}>
+      {report.newReport == true ? (        
+        <StyledButton style={{width: '45%', backgroundColor: green}} onPress={() => sendReport(report)}>
           <ButtonText>Gửi báo cáo</ButtonText>
-        </StyledButton>
-        <StyledButton style={{width: '45%', backgroundColor: brand}} onPress={() => navigation.goBack()}>
+        </StyledButton>) : (<></>)}
+        <StyledButton style={{width: report.newReport ? '45%' : '95%', backgroundColor : brand}} onPress={() => navigation.goBack()}>
           <ButtonText>Quay lại</ButtonText>
         </StyledButton>
       </View>

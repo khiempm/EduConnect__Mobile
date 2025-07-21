@@ -89,7 +89,6 @@ const AttendanceDetail = ({route, navigation}) => {
 
       {/* Submit button */}
       <SubmitButton style={styles.submitButton} onPress={() => {
-        console.log(studentId, note, selectedHomework, selectedFocus);
         if (onSave) {
           onSave({
             studentId: studentId,

@@ -16,7 +16,8 @@ export const makeTermReport = async (reportData) => {
         classId: classId,
         teacherId: teacherId,
         teacherName: await getTeacherName(userId),
-        className: await getClassName(classId)
+        className: await getClassName(classId),
+        newReport: true
       }
     }
   } catch (error) {
