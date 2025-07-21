@@ -40,13 +40,13 @@ import {
   getReportTypes,
   getSemesters,
   getAcademicYears,
-  generateReport,
   validateReportData,
   getReportPreview,
   getWeekStart,
   getWeekEnd,
   getMonthStart,
   getMonthEnd,
+  makeTermReport,
 } from "./CreateReportFunction";
 import { Colors } from "../../constant/color";
 import { formatDate, formatMonth } from "../../constant/formatTime";
@@ -199,16 +199,18 @@ const CreateReport = ({ navigation }) => {
           onPress:async() => {
             try {
               if(startTime && endTime && mode){
-                const result = await generateReport(
+                const result = await makeTermReport(
                   { startTime: startTime, 
                     endTime: endTime,
                     mode: mode
                   })
                   if(result){
-                    Alert.alert("Thành công", "Báo cáo đã được tạo thành công." + result.termId, [
+                    Alert.alert("Thành công", "Báo cáo đã được tạo thành công.", [
                       {
                         text: "OK",
-                        onPress: () => navigation.navigate('ReportHistory'),
+                        onPress: () => navigation.navigate('ReportDetail', {
+                          report: result,
+                        }),
                       },
                     ]);
                   }

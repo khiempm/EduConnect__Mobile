@@ -7,6 +7,7 @@ import {HeaderTitle, BackButton } from "../../constant/styleAttendanceList";
 import { Colors } from "../../constant/color";
 import { useReportHistory } from "./useReportHistory";
 import { formatDate } from "../../constant/formatTime";
+import Loading from "../../components/Loading";
 const { brand } = Colors;
 
 const StatusBarHeight = Constants.statusBarHeight;
@@ -25,14 +26,14 @@ const ReportHistory = () => {
       </BackButton>
       <HeaderTitle style={styles.header}>Lịch sử báo cáo</HeaderTitle>
       </View>
-      {listReports.map((report) => (
+      {listReports.length > 0 ? listReports.map((report) => (
         <TouchableOpacity key={report.reportId} style={styles.card} onPress={() => navigation.navigate('ReportDetail', { report })}>
           <Text style={styles.title}>{report.title}</Text>
           <Text style={styles.info}>Lớp: {report.className}</Text>
           <Text style={styles.info}>Giáo viên chủ nhiệm: {report.teacherName}</Text>
           <Text style={styles.info}>Ngày tạo: {formatDate(report.createdAt)}</Text>
         </TouchableOpacity>
-      ))}
+      )): <Loading visible={true} />}
     </ScrollView>
   );
 };

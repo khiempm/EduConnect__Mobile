@@ -48,7 +48,7 @@ export const handleTodayCourse = (notification) => {
   Alert.alert(
     "Tiết học hôm nay",
     `${notification.length > 0 ? notification.map(item => 
-      `${item.subject}: ${item.startTime} - ${item.endTime} ` + `(${item.status === "present" ? "Đã điểm danh" : "Chưa điểm danh"})`
+      `${item.subject}: ${item.startTime} - ${item.endTime} ` + `(${item.status === "present" ? "Đã điểm danh" : "Chưa điểm danh"})` +`\n`+`\n`
     ).join("\n") : "Hôm nay không có tiết học"}`,
     [{ text: "Đóng", style: "default" }]
   );

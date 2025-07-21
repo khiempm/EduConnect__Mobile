@@ -2,11 +2,52 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetcher, fetcherWithParams, postData } from "../../api/fetcher";
 import { formatDate, formatMonth } from "../../constant/formatTime";
 
-export const generateReport = async (reportData) => {
+export const makeTermReport = async (reportData) => {
   try {
+    const teacherId = await AsyncStorage.getItem('teacherId')
+    const classId = await AsyncStorage.getItem('classInfo')
+    const userId = await AsyncStorage.getItem('userId')
     const response = await postData('Term', reportData);
     if (response) {
-      return response;
+      const generate = await generateReport(response.termId, classId)
+      return {
+        ...generate,
+        termId: response.termId,
+        classId: classId,
+        teacherId: teacherId,
+        teacherName: await getTeacherName(userId),
+        className: await getClassName(classId)
+      }
+    }
+  } catch (error) {
+    console.error('Error generating report:', error);
+    throw error;
+  }
+};
+
+const getTeacherName = async (userId) => {
+  const response = await fetcher(`Teacher/${userId}`)
+  return response.fullName
+}
+
+const getClassName = async (classId) => {
+  const response = await fetcherWithParams('Classroom',{classId: classId})
+  return response.className
+}
+
+const generateReport = async (termId, classId) => {
+  try {
+    const response = await postData('report/generate', {
+      termId: termId,
+      classId: classId
+    });
+    if (response) {
+      const firstLine = response.split('\n')[0];
+      const rest = response.split('\n').slice(1).join('\n');
+      return {
+        title: firstLine,
+        description: rest
+      }
     }
   } catch (error) {
     console.error('Error generating report:', error);

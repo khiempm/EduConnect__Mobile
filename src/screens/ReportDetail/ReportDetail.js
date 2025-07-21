@@ -7,24 +7,26 @@ import {HeaderTitle, BackButton } from "../../constant/styleAttendanceList";
 import { Colors } from "../../constant/color";
 import { useReportDetail } from "./useReportDetail";
 import { formatDate } from "../../constant/formatTime";
+import Loading from "../../components/Loading";
+import { StyledButton,ButtonText} from "../../constant/style";
+import useProfile from "../Profile/useProfile";
 
 
 const StatusBarHeight = Constants.statusBarHeight;
-const { brand } = Colors;
+const { brand, green } = Colors;
 
 const ReportDetail = ({ route }) => {
   useEffect(() => {
-    getReportDetail(report);
+    getReportTerm(report);
   }, [route]);
-  const { timeDetail, loading, error, getReportDetail } = useReportDetail();
+  const { timeDetail, loading, error, getReportTerm } = useReportDetail();
   const { report } = route.params;
   const navigation = useNavigation();
   return (
-    <ScrollView style={styles.container}>
+    <>
+    {report && timeDetail?(
+    <View style={styles.container}>
       <View>
-      <BackButton style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={28} color={brand} />
-      </BackButton>
       <HeaderTitle style={styles.title}>{report.title}</HeaderTitle>
       </View>
       <View style={styles.row}>
@@ -65,8 +67,20 @@ const ReportDetail = ({ route }) => {
         </View>
       )}
       <Text style={styles.sectionTitle}>Mô tả báo cáo</Text>
-      <Text style={styles.description}>{report.description}</Text>
-    </ScrollView>
+      <ScrollView>
+        <Text style={styles.description}>{report.description}</Text>
+      </ScrollView>
+      <View style={{flexDirection: 'row', justifyContent: 'space-around',width: '100%', marginTop: 15}}>
+        <StyledButton style={{width: '45%', backgroundColor: green}}>
+          <ButtonText>Gửi báo cáo</ButtonText>
+        </StyledButton>
+        <StyledButton style={{width: '45%', backgroundColor: brand}} onPress={() => navigation.goBack()}>
+          <ButtonText>Quay lại</ButtonText>
+        </StyledButton>
+      </View>
+    </View>
+    ):<Loading visible={true} />}
+    </>
   );
 };
 

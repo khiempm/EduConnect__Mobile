@@ -6,15 +6,13 @@ export const useReportDetail = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const getReportDetail = async (report) => {
+    const getReportTerm = async (report) => {
         if (!report || !report.termId) {
             setError("Không có thông tin termId");
             return;
         }
-
         setLoading(true);
         setError(null);
-        
         try {
             const response = await fetcher(`Term/${report.termId}`);
             if(response){
@@ -34,6 +32,6 @@ export const useReportDetail = () => {
         timeDetail,
         loading,
         error,
-        getReportDetail,
+        getReportTerm,
     }
 }
